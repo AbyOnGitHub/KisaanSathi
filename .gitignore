@@ -55,3 +55,28 @@ pnpm-debug.log*
 # macOS
 .DS_Store
 Thumbs.db
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Env anywhere
+**/.env
+**/.env.local
+
+# Python venv anywhere
+**/.venv/
+**/venv/
+
+# Node anywhere
+**/node_modules/
+
+# Build outputs
+**/dist/
+**/build/
+**/__pycache__/
+.kilo/
