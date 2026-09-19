@@ -11,8 +11,9 @@ LoginSystem/
 ├── README.md               # Documentation & setup instructions
 ├── supabase_schema.sql     # Database schema, tables, triggers, and RLS policies
 ├── frontend_auth/
-│   ├── Login.jsx           # Login page with Google OAuth, Sample Developer Login, and Role-based routing
-│   ├── Signup.jsx          # Registration with Email Link / SMS OTP verification options & Google OAuth
+│   ├── RoleSelect.jsx      # Pre-login Role Selection page (Farmer vs Raw Material Dealer / Seller)
+│   ├── Login.jsx           # Role-aware login with Google OAuth & Sample Developer Login
+│   ├── Signup.jsx          # Role-aware registration with Email Link & SMS OTP verification options
 │   ├── ProtectedRoute.jsx  # Route guard checking Supabase session & role
 │   └── supabase.js         # Supabase client configuration
 └── backend_auth/
@@ -23,15 +24,27 @@ LoginSystem/
 
 ## Authentication Features
 
-### 1. Google OAuth Authentication
+### 1. Pre-Login Role Selection (`RoleSelect.jsx`)
+- The portal's entry point (`/` and `/select-role`) asks the user to choose their role before logging in:
+  - **Farmer (किसान / शेतकरी)** -> Navigates to `/login?role=farmer`.
+  - **Raw Material Dealer / Seller (कृषी विक्रेता)** -> Navigates to `/login?role=seller`.
+  - **Administrator Access** -> Navigates to `/login?role=admin`.
+- The Login page tailors its theme, badge, credentials, and routing based on this choice.
+- Users can click **"← Change Role"** anytime to switch roles.
+
+### 2. Google OAuth Authentication with Role Preservation
 - Users can sign in or sign up with their Google Account (`supabase.auth.signInWithOAuth({ provider: 'google' })`).
+- **Role Selection Preservation**:
+  - The chosen role is safely stored in `localStorage` before initiating OAuth redirection.
+  - When returning from Google OAuth, the user's profile is automatically created/verified with the selected role.
+  - This ensures Google OAuth strictly respects whether the user selected Farmer or Dealer.
 - To enable in Supabase:
   1. Go to **Supabase Dashboard** -> **Authentication** -> **Providers** -> **Google**.
   2. Toggle **Enable Google provider**.
   3. Enter Google Client ID and Google Client Secret from Google Cloud Console.
-  4. Add redirect URL: `<project-url>/auth/v1/callback` and `http://localhost:5173/crop-yield`.
+  4. Add redirect URL: `<project-url>/auth/v1/callback` and `http://localhost:5173/login`.
 
-### 2. Dual Verification Options During Sign-up
+### 3. Dual Verification Options During Sign-up
 - **Email Verification (Gmail)**:
   - Default recommended option.
   - Sends a secure verification link to the user's Gmail/email.
@@ -41,10 +54,13 @@ LoginSystem/
   - User enters OTP to verify and immediately activate their account.
   - Fallback/demo mode supports sandbox OTPs (`123456`) and developer bypass.
 
-### 3. Developer & Demonstration Sample Login
+### 4. Developer & Demonstration Sample Login
 - On the Login page:
-  - **"Fill Sample Data"**: 1-click auto-fills sample farmer credentials (`demo.farmer@kisaansathi.org` / `DemoFarmer@2025`).
-  - **"1-Click Demo"**: Instant bypass directly to `/crop-yield` so developers and evaluators can demo the application smoothly during viva/presentations without internet latency or authentication blockers.
+  - **"Fill Sample Data"**: 1-click auto-fills sample credentials tailored to the selected role:
+    - Farmer: `demo.farmer@kisaansathi.org` / `DemoFarmer@2025`
+    - Dealer: `demo.seller@kisaansathi.org` / `DemoSeller@2025`
+    - Admin: `demo.admin@kisaansathi.org` / `DemoAdmin@2025`
+  - **"1-Click Demo"**: Instant bypass directly to the respective portal (`/crop-yield` for farmers, `/seller` for dealers, `/admin` for administrators) for zero-latency viva and project demonstrations.
 
 ---
 

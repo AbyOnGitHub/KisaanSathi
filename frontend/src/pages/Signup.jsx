@@ -1,10 +1,17 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Sprout, Mail, Phone, CheckCircle2, ShieldCheck, ArrowRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { Sprout, Store, Mail, Phone, CheckCircle2, ShieldCheck, ArrowRight, ArrowLeft } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 export default function Signup() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const roleParam = searchParams.get('role');
+  const [selectedRole, setSelectedRole] = useState(() => {
+    return roleParam || localStorage.getItem('kisaansathi_selected_role') || 'farmer';
+  });
+
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -23,16 +30,29 @@ export default function Signup() {
     password: '',
     fullName: '',
     phone: '',
-    role: 'farmer',
+    role: selectedRole,
     businessName: '',
     gstin: '',
   });
 
+  useEffect(() => {
+    if (roleParam && ['farmer', 'seller'].includes(roleParam)) {
+      setSelectedRole(roleParam);
+      setFormData((prev) => ({ ...prev, role: roleParam }));
+      localStorage.setItem('kisaansathi_selected_role', roleParam);
+    }
+  }, [roleParam]);
+
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+    if (name === 'role') {
+      setSelectedRole(value);
+      localStorage.setItem('kisaansathi_selected_role', value);
+    }
   };
 
   // Format phone number with country code for Supabase SMS (+91 for India if not provided)
@@ -48,16 +68,21 @@ export default function Signup() {
     return clean;
   };
 
-  // Google OAuth Signup
+  // Google OAuth Signup with role preservation
   const handleGoogleSignup = async () => {
     setGoogleLoading(true);
     setError(null);
+
+    localStorage.setItem('kisaansathi_oauth_role', selectedRole);
 
     try {
       const { error: googleError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/crop-yield`,
+          redirectTo: `${window.location.origin}/login?role=${selectedRole}`,
+          queryParams: {
+            prompt: 'select_account',
+          }
         },
       });
 
@@ -87,13 +112,13 @@ export default function Signup() {
           email: formData.email,
           password: formData.password,
           options: {
-            emailRedirectTo: `${window.location.origin}/login`,
+            emailRedirectTo: `${window.location.origin}/login?role=${selectedRole}`,
             data: {
               full_name: formData.fullName,
               phone_number: formattedPhone,
-              role: formData.role,
-              business_name: formData.role === 'seller' ? formData.businessName : null,
-              gstin_or_license: formData.role === 'seller' ? formData.gstin : null,
+              role: selectedRole,
+              business_name: selectedRole === 'seller' ? formData.businessName : null,
+              gstin_or_license: selectedRole === 'seller' ? formData.gstin : null,
             }
           }
         });
@@ -105,20 +130,17 @@ export default function Signup() {
 
       } else {
         // 2. Phone / SMS Verification: Send OTP via SMS
-        // Note: Supabase signInWithOtp or signUp with phone
         const { data, error: phoneError } = await supabase.auth.signInWithOtp({
           phone: formattedPhone,
           options: {
             data: {
               full_name: formData.fullName,
-              role: formData.role,
+              role: selectedRole,
             }
           }
         });
 
         if (phoneError) {
-          // If SMS provider (e.g. Twilio/MessageBird) is not configured yet in Supabase,
-          // create user with email/password and allow demo fallback
           console.warn('SMS OTP notice:', phoneError.message);
           const { error: fallbackError } = await supabase.auth.signUp({
             email: formData.email,
@@ -127,7 +149,7 @@ export default function Signup() {
               data: {
                 full_name: formData.fullName,
                 phone_number: formattedPhone,
-                role: formData.role,
+                role: selectedRole,
               }
             }
           });
@@ -161,17 +183,16 @@ export default function Signup() {
       });
 
       if (verifyError) {
-        // If testing/demo mode or SMS provider sandbox
         if (otpCode === '123456' || otpCode === '000000') {
           setOtpSuccess(true);
-          setTimeout(() => navigate('/crop-yield'), 1500);
+          setTimeout(() => navigate(selectedRole === 'seller' ? '/seller' : '/crop-yield'), 1500);
           return;
         }
         throw verifyError;
       }
 
       setOtpSuccess(true);
-      setTimeout(() => navigate('/crop-yield'), 1500);
+      setTimeout(() => navigate(selectedRole === 'seller' ? '/seller' : '/crop-yield'), 1500);
 
     } catch (err) {
       setError(err.message + ' (Tip for demo: If SMS provider is in sandbox, use demo bypass below).');
@@ -184,16 +205,34 @@ export default function Signup() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-6 bg-white p-8 rounded-xl shadow-md border border-gray-100">
         
+        {/* Change Role Back Link */}
+        <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+          <Link
+            to="/select-role"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-gray-900 transition-colors"
+          >
+            <ArrowLeft size={14} />
+            <span>Change Role</span>
+          </Link>
+          <span className={`text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
+            selectedRole === 'seller'
+              ? 'bg-blue-100 text-blue-800 border-blue-200'
+              : 'bg-green-100 text-green-800 border-green-200'
+          }`}>
+            {selectedRole === 'seller' ? 'Dealer (विक्रेता)' : 'Farmer (किसान)'}
+          </span>
+        </div>
+
         {/* Header */}
         <div className="text-center">
           <div className="inline-flex items-center justify-center p-3 bg-green-50 rounded-full mb-3">
-            <Sprout size={36} color="#2d6a4f" />
+            {selectedRole === 'seller' ? <Store size={36} color="#1d4ed8" /> : <Sprout size={36} color="#2d6a4f" />}
           </div>
           <h2 className="text-2xl font-extrabold text-gray-900">
             Join KisaanSathi
           </h2>
-          <p className="text-sm text-gray-500 mt-1">
-            Farmer Portal | किसान साथी | शेतकरी पोर्टल
+          <p className="text-xs text-gray-500 mt-1">
+            {selectedRole === 'seller' ? 'Raw Material Dealer Registration' : 'Farmer Portal Registration | शेतकरी नोंदणी'}
           </p>
         </div>
 
@@ -232,7 +271,7 @@ export default function Signup() {
                     d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
                   />
                 </svg>
-                <span>{googleLoading ? 'Connecting to Google...' : 'Sign up with Google'}</span>
+                <span>{googleLoading ? 'Connecting to Google...' : `Sign up with Google as ${selectedRole === 'seller' ? 'Dealer' : 'Farmer'}`}</span>
               </button>
             </div>
 
@@ -245,19 +284,19 @@ export default function Signup() {
             </div>
 
             <form className="space-y-4" onSubmit={handleSignup}>
-              {/* Role Selection */}
+              {/* Role Selection Switcher */}
               <div>
                 <label className="block text-xs font-semibold text-gray-700 uppercase mb-1">
-                  I am a...
+                  Selected Role
                 </label>
                 <select
                   name="role"
-                  value={formData.role}
+                  value={selectedRole}
                   onChange={handleChange}
                   className="block w-full px-3 py-2 text-sm border-gray-300 rounded-md border focus:ring-green-500 focus:border-green-500 bg-white"
                 >
                   <option value="farmer">Farmer (किसान / शेतकरी)</option>
-                  <option value="seller">Raw Material Dealer (विक्रेता)</option>
+                  <option value="seller">Raw Material Dealer (कृषी विक्रेता)</option>
                 </select>
               </div>
 
@@ -327,7 +366,7 @@ export default function Signup() {
               </div>
 
               {/* Dealer Specific Fields */}
-              {formData.role === 'seller' && (
+              {selectedRole === 'seller' && (
                 <div className="space-y-3 pt-3 border-t border-gray-200">
                   <p className="text-xs font-semibold text-gray-700 uppercase">
                     Dealer Verification Details
@@ -400,12 +439,12 @@ export default function Signup() {
                   disabled={loading}
                   className="w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-semibold rounded-md text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
                 >
-                  {loading ? 'Submitting Registration...' : `Register (${verificationMethod === 'email' ? 'Email Verify' : 'SMS Verify'})`}
+                  {loading ? 'Submitting Registration...' : `Register as ${selectedRole === 'seller' ? 'Dealer' : 'Farmer'}`}
                 </button>
               </div>
 
               <div className="text-sm text-center pt-2">
-                <Link to="/login" className="font-medium text-green-700 hover:text-green-600">
+                <Link to={`/login?role=${selectedRole}`} className="font-medium text-green-700 hover:text-green-600">
                   Already have an account? Log in
                 </Link>
               </div>
@@ -438,7 +477,7 @@ export default function Signup() {
             <div className="pt-2 space-y-2">
               <button
                 type="button"
-                onClick={() => navigate('/login')}
+                onClick={() => navigate(`/login?role=${selectedRole}`)}
                 className="w-full py-2.5 px-4 border border-transparent text-sm font-semibold rounded-md text-white bg-green-700 hover:bg-green-800 transition-colors"
               >
                 Go to Login Page
@@ -501,10 +540,10 @@ export default function Signup() {
                 <div className="pt-2 border-t border-gray-200 text-center">
                   <button
                     type="button"
-                    onClick={() => navigate('/crop-yield')}
+                    onClick={() => navigate(selectedRole === 'seller' ? '/seller' : '/crop-yield')}
                     className="inline-flex items-center gap-1 text-xs text-green-700 hover:text-green-800 font-medium"
                   >
-                    <span>Developer Demo Bypass → Continue to Portal</span>
+                    <span>Developer Demo Bypass → Continue</span>
                     <ArrowRight size={12} />
                   </button>
                 </div>

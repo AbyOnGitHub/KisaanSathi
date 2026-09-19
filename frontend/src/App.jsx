@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import RoleSelect from './pages/RoleSelect';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import FarmerPortal from './pages/FarmerPortal';
@@ -9,7 +10,7 @@ import { supabase } from './lib/supabase';
 const SellerDashboard = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    window.location.href = '/login';
+    window.location.href = '/select-role';
   };
   return (
     <div className="p-8 max-w-4xl mx-auto">
@@ -28,7 +29,7 @@ const SellerDashboard = () => {
 const AdminDashboard = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    window.location.href = '/login';
+    window.location.href = '/select-role';
   };
   return (
     <div className="p-8 max-w-4xl mx-auto">
@@ -47,7 +48,7 @@ const AdminDashboard = () => {
 const PendingVerification = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    window.location.href = '/login';
+    window.location.href = '/select-role';
   };
   return (
     <div className="p-8 max-w-4xl mx-auto">
@@ -66,6 +67,11 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* Step 1: Role Selection Page is the entrypoint */}
+        <Route path="/" element={<RoleSelect />} />
+        <Route path="/select-role" element={<RoleSelect />} />
+
+        {/* Step 2: Role-aware Login and Signup */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         
@@ -103,8 +109,8 @@ function App() {
           </ProtectedRoute>
         } />
 
-        {/* Default route redirects to login */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        {/* Fallback to Role Selection */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
