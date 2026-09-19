@@ -1,9 +1,10 @@
 # KisaanSathi Frontend
 
-Farmer-friendly web portal built for **KisaanSathi (किसान साथी)** using React and Vite.
+Farmer-friendly web portal built for **KisaanSathi (किसान साथी)** using React, Tailwind CSS, and Vite.
 
 ## Features
 
+- **Authentication & Role-Based Dashboards**: Login, signup, and protected routing for Farmers, Sellers, and Admins powered by Supabase.
 - **Farmer-Centric Design**: Large accessible input fields, plain language labels with units, helper hints, and quick "Sample Data" loader.
 - **Crop Yield Prediction**: Form connected in real-time to the FastAPI backend Gradient Boosting ML model.
 - **Responsive Layout**: Designed for mobile, tablet, and desktop viewports.

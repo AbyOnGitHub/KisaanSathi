@@ -1,13 +1,37 @@
-# Python
+# Environment variables
+.env
+.env.*
+
+# Python / FastAPI
+backend/venv/
+venv/
+env/
+ENV/
+.Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-.Python
-env/
-venv/
-ENV/
-.env
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.coverage
+.tox/
+.nox/
+.pytest_cache/
+htmlcov/
 
 # Node / Frontend
 node_modules/

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Sprout, TrendingUp, ShieldAlert, Landmark, Handshake, Home } from 'lucide-react';
+import { Sprout, TrendingUp, ShieldAlert, Landmark, Handshake, Home, LogOut } from 'lucide-react';
 
-export default function Navbar({ activeTab, setActiveTab }) {
+export default function Navbar({ activeTab, setActiveTab, onLogout }) {
   return (
     <header className="navbar">
       <div className="nav-container">
@@ -65,6 +65,20 @@ export default function Navbar({ activeTab, setActiveTab }) {
                 <span className="badge">Soon</span>
               </button>
             </li>
+
+            {onLogout && (
+              <li>
+                <button
+                  className="nav-btn"
+                  onClick={onLogout}
+                  title="Sign out"
+                  style={{ color: '#b91c1c' }}
+                >
+                  <LogOut size={18} />
+                  <span>Logout</span>
+                </button>
+              </li>
+            )}
           </ul>
         </nav>
       </div>
