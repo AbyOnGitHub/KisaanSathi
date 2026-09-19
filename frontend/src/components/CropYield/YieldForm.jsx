@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Sparkles, RotateCcw, AlertCircle } from 'lucide-react';
+import { Sparkles, RotateCcw } from 'lucide-react';
 
-export default function YieldForm({ onSubmit, isLoading }) {
+export default function YieldForm({ onSubmit, isLoading, t }) {
   const [formData, setFormData] = useState({
     rainfall: '',
     fertilizer: '',
@@ -35,44 +35,44 @@ export default function YieldForm({ onSubmit, isLoading }) {
 
     const rf = parseFloat(formData.rainfall);
     if (!formData.rainfall || isNaN(rf)) {
-      newErrors.rainfall = 'Please enter a valid rainfall value.';
+      newErrors.rainfall = t?.rainfallError || 'Please enter a valid rainfall value.';
     } else if (rf < 100 || rf > 3000) {
-      newErrors.rainfall = 'Rainfall should typically be between 100 and 3000 mm.';
+      newErrors.rainfall = t?.rainfallError || 'Rainfall should typically be between 100 and 3000 mm.';
     }
 
     const fert = parseFloat(formData.fertilizer);
     if (!formData.fertilizer || isNaN(fert)) {
-      newErrors.fertilizer = 'Please enter a valid fertilizer quantity.';
+      newErrors.fertilizer = t?.fertilizerError || 'Please enter a valid fertilizer quantity.';
     } else if (fert < 10 || fert > 300) {
-      newErrors.fertilizer = 'Fertilizer should typically be between 10 and 300 units.';
+      newErrors.fertilizer = t?.fertilizerError || 'Fertilizer should typically be between 10 and 300 units.';
     }
 
     const temp = parseFloat(formData.temperature);
     if (!formData.temperature || isNaN(temp)) {
-      newErrors.temperature = 'Please enter a valid temperature.';
+      newErrors.temperature = t?.temperatureError || 'Please enter a valid temperature.';
     } else if (temp < 10 || temp > 55) {
-      newErrors.temperature = 'Temperature should typically be between 10°C and 55°C.';
+      newErrors.temperature = t?.temperatureError || 'Temperature should typically be between 10°C and 55°C.';
     }
 
     const n = parseFloat(formData.nitrogen);
     if (!formData.nitrogen || isNaN(n)) {
-      newErrors.nitrogen = 'Please enter soil Nitrogen (N) value.';
+      newErrors.nitrogen = t?.nitrogenError || 'Please enter soil Nitrogen (N) value.';
     } else if (n < 10 || n > 200) {
-      newErrors.nitrogen = 'Nitrogen (N) should typically be between 10 and 200.';
+      newErrors.nitrogen = t?.nitrogenError || 'Nitrogen (N) should typically be between 10 and 200.';
     }
 
     const p = parseFloat(formData.phosphorus);
     if (!formData.phosphorus || isNaN(p)) {
-      newErrors.phosphorus = 'Please enter soil Phosphorus (P) value.';
+      newErrors.phosphorus = t?.phosphorusError || 'Please enter soil Phosphorus (P) value.';
     } else if (p < 5 || p > 100) {
-      newErrors.phosphorus = 'Phosphorus (P) should typically be between 5 and 100.';
+      newErrors.phosphorus = t?.phosphorusError || 'Phosphorus (P) should typically be between 5 and 100.';
     }
 
     const k = parseFloat(formData.potassium);
     if (!formData.potassium || isNaN(k)) {
-      newErrors.potassium = 'Please enter soil Potassium (K) value.';
+      newErrors.potassium = t?.potassiumError || 'Please enter soil Potassium (K) value.';
     } else if (k < 5 || k > 100) {
-      newErrors.potassium = 'Potassium (K) should typically be between 5 and 100.';
+      newErrors.potassium = t?.potassiumError || 'Potassium (K) should typically be between 5 and 100.';
     }
 
     setErrors(newErrors);
@@ -107,7 +107,7 @@ export default function YieldForm({ onSubmit, isLoading }) {
     <div className="card">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.5rem' }}>
         <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--primary-hover)' }}>
-          Enter Farm Conditions
+          {t?.formTitle || 'Enter Farm Conditions'}
         </h2>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           <button
@@ -118,7 +118,7 @@ export default function YieldForm({ onSubmit, isLoading }) {
             title="Populate form with realistic agricultural data"
           >
             <Sparkles size={15} color="var(--primary)" />
-            <span>Sample Data</span>
+            <span>{t?.sampleDataBtn || 'Sample Data'}</span>
           </button>
           <button
             type="button"
@@ -128,7 +128,7 @@ export default function YieldForm({ onSubmit, isLoading }) {
             title="Clear all fields"
           >
             <RotateCcw size={15} />
-            <span>Reset</span>
+            <span>{t?.resetBtn || 'Reset'}</span>
           </button>
         </div>
       </div>
@@ -138,8 +138,8 @@ export default function YieldForm({ onSubmit, isLoading }) {
           {/* Rainfall */}
           <div className="form-group">
             <label className="form-label" htmlFor="rainfall">
-              <span>Rainfall</span>
-              <span className="form-unit">mm</span>
+              <span>{t?.rainfallLabel || 'Rainfall'}</span>
+              <span className="form-unit">{t?.rainfallUnit || 'mm'}</span>
             </label>
             <input
               id="rainfall"
@@ -147,20 +147,20 @@ export default function YieldForm({ onSubmit, isLoading }) {
               type="number"
               step="any"
               className={`form-input ${errors.rainfall ? 'input-error' : ''}`}
-              placeholder="e.g. 1200"
+              placeholder={t?.rainfallPlaceholder || 'e.g. 1200'}
               value={formData.rainfall}
               onChange={handleChange}
               disabled={isLoading}
             />
-            <span className="form-helper">Expected or recorded rainfall in millimetres.</span>
+            <span className="form-helper">{t?.rainfallHelper || 'Expected or recorded rainfall in millimetres.'}</span>
             {errors.rainfall && <span className="form-error-msg">{errors.rainfall}</span>}
           </div>
 
           {/* Fertilizer */}
           <div className="form-group">
             <label className="form-label" htmlFor="fertilizer">
-              <span>Fertilizer</span>
-              <span className="form-unit">units</span>
+              <span>{t?.fertilizerLabel || 'Fertilizer'}</span>
+              <span className="form-unit">{t?.fertilizerUnit || 'units'}</span>
             </label>
             <input
               id="fertilizer"
@@ -168,20 +168,20 @@ export default function YieldForm({ onSubmit, isLoading }) {
               type="number"
               step="any"
               className={`form-input ${errors.fertilizer ? 'input-error' : ''}`}
-              placeholder="e.g. 80"
+              placeholder={t?.fertilizerPlaceholder || 'e.g. 80'}
               value={formData.fertilizer}
               onChange={handleChange}
               disabled={isLoading}
             />
-            <span className="form-helper">Amount of fertilizer applied to the field.</span>
+            <span className="form-helper">{t?.fertilizerHelper || 'Amount of fertilizer applied to the field.'}</span>
             {errors.fertilizer && <span className="form-error-msg">{errors.fertilizer}</span>}
           </div>
 
           {/* Temperature */}
           <div className="form-group">
             <label className="form-label" htmlFor="temperature">
-              <span>Temperature</span>
-              <span className="form-unit">°C</span>
+              <span>{t?.temperatureLabel || 'Temperature'}</span>
+              <span className="form-unit">{t?.temperatureUnit || '°C'}</span>
             </label>
             <input
               id="temperature"
@@ -189,20 +189,20 @@ export default function YieldForm({ onSubmit, isLoading }) {
               type="number"
               step="any"
               className={`form-input ${errors.temperature ? 'input-error' : ''}`}
-              placeholder="e.g. 28"
+              placeholder={t?.temperaturePlaceholder || 'e.g. 28'}
               value={formData.temperature}
               onChange={handleChange}
               disabled={isLoading}
             />
-            <span className="form-helper">Average season temperature in Celsius.</span>
+            <span className="form-helper">{t?.temperatureHelper || 'Average season temperature in Celsius.'}</span>
             {errors.temperature && <span className="form-error-msg">{errors.temperature}</span>}
           </div>
 
           {/* Nitrogen (N) */}
           <div className="form-group">
             <label className="form-label" htmlFor="nitrogen">
-              <span>Nitrogen (N)</span>
-              <span className="form-unit">N level</span>
+              <span>{t?.nitrogenLabel || 'Nitrogen (N)'}</span>
+              <span className="form-unit">{t?.nitrogenUnit || 'N level'}</span>
             </label>
             <input
               id="nitrogen"
@@ -210,20 +210,20 @@ export default function YieldForm({ onSubmit, isLoading }) {
               type="number"
               step="any"
               className={`form-input ${errors.nitrogen ? 'input-error' : ''}`}
-              placeholder="e.g. 80"
+              placeholder={t?.nitrogenPlaceholder || 'e.g. 80'}
               value={formData.nitrogen}
               onChange={handleChange}
               disabled={isLoading}
             />
-            <span className="form-helper">Soil Nitrogen content from soil test.</span>
+            <span className="form-helper">{t?.nitrogenHelper || 'Soil Nitrogen content from soil test.'}</span>
             {errors.nitrogen && <span className="form-error-msg">{errors.nitrogen}</span>}
           </div>
 
           {/* Phosphorus (P) */}
           <div className="form-group">
             <label className="form-label" htmlFor="phosphorus">
-              <span>Phosphorus (P)</span>
-              <span className="form-unit">P level</span>
+              <span>{t?.phosphorusLabel || 'Phosphorus (P)'}</span>
+              <span className="form-unit">{t?.phosphorusUnit || 'P level'}</span>
             </label>
             <input
               id="phosphorus"
@@ -231,20 +231,20 @@ export default function YieldForm({ onSubmit, isLoading }) {
               type="number"
               step="any"
               className={`form-input ${errors.phosphorus ? 'input-error' : ''}`}
-              placeholder="e.g. 24"
+              placeholder={t?.phosphorusPlaceholder || 'e.g. 24'}
               value={formData.phosphorus}
               onChange={handleChange}
               disabled={isLoading}
             />
-            <span className="form-helper">Soil Phosphorus content from soil test.</span>
+            <span className="form-helper">{t?.phosphorusHelper || 'Soil Phosphorus content from soil test.'}</span>
             {errors.phosphorus && <span className="form-error-msg">{errors.phosphorus}</span>}
           </div>
 
           {/* Potassium (K) */}
           <div className="form-group">
             <label className="form-label" htmlFor="potassium">
-              <span>Potassium (K)</span>
-              <span className="form-unit">K level</span>
+              <span>{t?.potassiumLabel || 'Potassium (K)'}</span>
+              <span className="form-unit">{t?.potassiumUnit || 'K level'}</span>
             </label>
             <input
               id="potassium"
@@ -252,12 +252,12 @@ export default function YieldForm({ onSubmit, isLoading }) {
               type="number"
               step="any"
               className={`form-input ${errors.potassium ? 'input-error' : ''}`}
-              placeholder="e.g. 20"
+              placeholder={t?.potassiumPlaceholder || 'e.g. 20'}
               value={formData.potassium}
               onChange={handleChange}
               disabled={isLoading}
             />
-            <span className="form-helper">Soil Potassium content from soil test.</span>
+            <span className="form-helper">{t?.potassiumHelper || 'Soil Potassium content from soil test.'}</span>
             {errors.potassium && <span className="form-error-msg">{errors.potassium}</span>}
           </div>
         </div>
@@ -270,9 +270,9 @@ export default function YieldForm({ onSubmit, isLoading }) {
             disabled={isLoading}
           >
             {isLoading ? (
-              <span>Calculating Estimate...</span>
+              <span>{t?.calculatingBtn || 'Calculating Estimate...'}</span>
             ) : (
-              <span>Predict Yield</span>
+              <span>{t?.predictBtn || 'Predict Yield'}</span>
             )}
           </button>
         </div>

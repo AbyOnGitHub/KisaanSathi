@@ -11,8 +11,8 @@ LoginSystem/
 ├── README.md               # Documentation & setup instructions
 ├── supabase_schema.sql     # Database schema, tables, triggers, and RLS policies
 ├── frontend_auth/
-│   ├── Login.jsx           # Login page with role-based redirection
-│   ├── Signup.jsx          # Registration with role selection (Farmer, Seller)
+│   ├── Login.jsx           # Login page with Google OAuth, Sample Developer Login, and Role-based routing
+│   ├── Signup.jsx          # Registration with Email Link / SMS OTP verification options & Google OAuth
 │   ├── ProtectedRoute.jsx  # Route guard checking Supabase session & role
 │   └── supabase.js         # Supabase client configuration
 └── backend_auth/
@@ -21,10 +21,37 @@ LoginSystem/
 
 ---
 
+## Authentication Features
+
+### 1. Google OAuth Authentication
+- Users can sign in or sign up with their Google Account (`supabase.auth.signInWithOAuth({ provider: 'google' })`).
+- To enable in Supabase:
+  1. Go to **Supabase Dashboard** -> **Authentication** -> **Providers** -> **Google**.
+  2. Toggle **Enable Google provider**.
+  3. Enter Google Client ID and Google Client Secret from Google Cloud Console.
+  4. Add redirect URL: `<project-url>/auth/v1/callback` and `http://localhost:5173/crop-yield`.
+
+### 2. Dual Verification Options During Sign-up
+- **Email Verification (Gmail)**:
+  - Default recommended option.
+  - Sends a secure verification link to the user's Gmail/email.
+  - User clicks the link to confirm their email before logging in.
+- **Phone / SMS OTP Verification**:
+  - User receives a 6-digit one-time password (OTP) via SMS on their phone.
+  - User enters OTP to verify and immediately activate their account.
+  - Fallback/demo mode supports sandbox OTPs (`123456`) and developer bypass.
+
+### 3. Developer & Demonstration Sample Login
+- On the Login page:
+  - **"Fill Sample Data"**: 1-click auto-fills sample farmer credentials (`demo.farmer@kisaansathi.org` / `DemoFarmer@2025`).
+  - **"1-Click Demo"**: Instant bypass directly to `/crop-yield` so developers and evaluators can demo the application smoothly during viva/presentations without internet latency or authentication blockers.
+
+---
+
 ## Roles Supported
 
 1. **Farmer**:
-   - Has access to the Crop Yield Prediction module and farmer services.
+   - Access to the Multilingual Crop Yield Prediction module (English, Hindi, Marathi).
    - Redirects to `/crop-yield` upon successful login.
 
 2. **Seller (Raw Material Dealer)**:
