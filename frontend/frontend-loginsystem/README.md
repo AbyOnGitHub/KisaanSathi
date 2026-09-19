@@ -8,13 +8,34 @@ This folder contains all frontend components and configuration for the **KisaanS
 
 ```
 frontend/frontend-loginsystem/
-├── README.md               # Frontend integration documentation
-└── frontend_auth/
-    ├── RoleSelect.jsx      # Pre-login Role Selection (Farmer vs Dealer / Seller vs Admin)
-    ├── Login.jsx           # Role-aware Login with Google OAuth & 1-Click Developer Demo
-    ├── Signup.jsx          # Role-aware Registration with Email Verification Link & SMS OTP
-    ├── ProtectedRoute.jsx  # Route guard checking Supabase session & user role
-    └── supabase.js         # Supabase client & Demo Session state management
+├── public/                 # Static assets (favicons, icons)
+├── src/                    # Running application source code
+│   ├── components/         # ProtectedRoute.jsx
+│   ├── pages/              # RoleSelect.jsx, Login.jsx, Signup.jsx
+│   ├── App.jsx             # Main router
+│   ├── main.jsx            # Entry point
+│   └── index.css           # Tailwind styles
+├── frontend_auth/          # Standalone portable auth modules
+│   ├── RoleSelect.jsx
+│   ├── Login.jsx
+│   ├── Signup.jsx
+│   ├── ProtectedRoute.jsx
+│   └── supabase.js
+├── index.html              # HTML entry page
+├── package.json            # Dependencies & scripts
+├── vite.config.js          # Vite build config
+├── tailwind.config.js      # Tailwind CSS config
+└── README.md
+```
+
+---
+
+## How to Run the Frontend
+
+```bash
+cd frontend/frontend-loginsystem
+npm install
+npm run dev
 ```
 
 ---
@@ -43,21 +64,19 @@ frontend/frontend-loginsystem/
 ## Setup for Teammates
 
 ### 1. Environment Variables
-Add your Supabase project keys to `frontend/.env`:
+Create `.env` in `frontend/frontend-loginsystem/.env`:
 ```env
 VITE_SUPABASE_URL=https://pxzikfwejlncbwcrsujv.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
 ```
 
-### 2. Required NPM Packages
-Ensure the following dependencies are installed in `frontend/`:
+### 2. Running Locally
 ```bash
-npm install @supabase/supabase-js lucide-react react-router-dom
+cd frontend/frontend-loginsystem
+npm install
+npm run dev
 ```
 
-### 3. Using in `App.jsx`
-You can import the authentication components directly:
-```jsx
 import RoleSelect from './frontend-loginsystem/frontend_auth/RoleSelect';
 import Login from './frontend-loginsystem/frontend_auth/Login';
 import Signup from './frontend-loginsystem/frontend_auth/Signup';

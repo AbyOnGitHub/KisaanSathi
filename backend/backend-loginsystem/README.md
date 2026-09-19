@@ -19,6 +19,8 @@ KisaanSathi/
 │           └── supabase.js         # Supabase client configuration
 └── backend/
     └── backend-loginsystem/
+        ├── main.py                 # FastAPI backend server
+        ├── requirements.txt        # Backend dependencies
         ├── README.md               # Backend documentation & setup
         ├── supabase_schema.sql     # Database schema, triggers, and RLS policies
         └── backend_auth/
