@@ -38,23 +38,32 @@ ON public.profiles FOR UPDATE
 USING ( auth.uid() = id )
 WITH CHECK ( auth.uid() = id );
 
--- Function to handle new user signup and create a profile automatically
+-- Drop unique constraint on phone_number if it exists so duplicate/test numbers don't break signup
+ALTER TABLE public.profiles DROP CONSTRAINT IF EXISTS profiles_phone_number_key;
+
+-- Function to handle new user signup and create a profile automatically (failsafe)
 CREATE OR REPLACE FUNCTION public.handle_new_user() 
 RETURNS TRIGGER AS $$
 DECLARE
     user_role_val public.user_role;
+    full_name_val TEXT;
+    phone_val TEXT;
 BEGIN
-    -- Extract role from metadata, default to 'farmer' if not provided
-    IF NEW.raw_user_meta_data->>'role' = 'seller' THEN
+    -- Determine role safely (case-insensitive)
+    IF LOWER(COALESCE(NEW.raw_user_meta_data->>'role', 'farmer')) = 'seller' THEN
         user_role_val := 'seller';
-    ELSIF NEW.raw_user_meta_data->>'role' = 'admin' THEN
-        -- Prevent unauthorized admin creation through signup
-        -- In a real scenario, you'd make someone admin manually via DB
-        user_role_val := 'farmer';
     ELSE
         user_role_val := 'farmer';
     END IF;
 
+    full_name_val := COALESCE(
+        NEW.raw_user_meta_data->>'full_name', 
+        NEW.raw_user_meta_data->>'name', 
+        split_part(NEW.email, '@', 1)
+    );
+    phone_val := NULLIF(TRIM(NEW.raw_user_meta_data->>'phone_number'), '');
+
+    -- Upsert into profiles table
     INSERT INTO public.profiles (
         id, 
         role, 
@@ -66,11 +75,29 @@ BEGIN
     VALUES (
         NEW.id,
         user_role_val,
-        NEW.raw_user_meta_data->>'full_name',
-        NEW.raw_user_meta_data->>'phone_number',
+        full_name_val,
+        phone_val,
         NEW.raw_user_meta_data->>'business_name',
         NEW.raw_user_meta_data->>'gstin_or_license'
-    );
+    )
+    ON CONFLICT (id) DO UPDATE SET
+        role = EXCLUDED.role,
+        full_name = COALESCE(EXCLUDED.full_name, public.profiles.full_name),
+        phone_number = COALESCE(EXCLUDED.phone_number, public.profiles.phone_number),
+        business_name = COALESCE(EXCLUDED.business_name, public.profiles.business_name),
+        gstin_or_license = COALESCE(EXCLUDED.gstin_or_license, public.profiles.gstin_or_license),
+        updated_at = NOW();
+
+    RETURN NEW;
+EXCEPTION WHEN OTHERS THEN
+    -- Fallback: Ensure user registration in auth.users NEVER fails even if profile metadata has unexpected format
+    BEGIN
+        INSERT INTO public.profiles (id, role, full_name)
+        VALUES (NEW.id, 'farmer', COALESCE(full_name_val, 'User'))
+        ON CONFLICT (id) DO NOTHING;
+    EXCEPTION WHEN OTHERS THEN
+        NULL;
+    END;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

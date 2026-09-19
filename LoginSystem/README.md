@@ -80,28 +80,45 @@ LoginSystem/
 
 ---
 
-## Database Setup (Supabase)
+## Supabase URL Configuration for Team Development (Localhost & Redirects)
 
-1. Create a new Supabase project at [https://supabase.com](https://supabase.com).
-2. Navigate to the **SQL Editor** in your Supabase dashboard.
-3. Paste and run the contents of `supabase_schema.sql`.
-4. In Project Settings > API, copy:
-   - **Project URL** -> `VITE_SUPABASE_URL` (frontend) & `SUPABASE_URL` (backend)
-   - **Anon Key** -> `VITE_SUPABASE_ANON_KEY` (frontend)
-   - **Service Role Key** -> `SUPABASE_SERVICE_ROLE_KEY` (backend)
+Is `http://localhost:5173` common for everyone? **Yes!**
+Because Vite starts its local development server at `http://localhost:5173` on every developer's machine, `localhost` resolves locally in each teammate's browser.
+
+To ensure all teammates can authenticate and use Google OAuth / Email verification seamlessly on their machines:
+1. In the **Supabase Dashboard**, navigate to **Authentication** -> **URL Configuration**.
+2. Set **Site URL**: `http://localhost:5173`
+3. In **Redirect URLs**, add the following entries (with wildcards):
+   - `http://localhost:5173/**`
+   - `http://localhost:5173/login`
+   - `http://localhost:5173/`
+   - `http://127.0.0.1:5173/**`
+   - `http://localhost:3000/**` (in case a teammate's Vite runs on port 3000)
+4. Click **Save**.
+
+This allows any teammate running `npm run dev` to log in, sign up, verify email, and use Google OAuth without any redirect mismatches.
 
 ---
 
-## Environment Configuration
+## How Teammates Can Use This in Their Branches
 
-### Frontend (`frontend/.env`)
-```env
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
+Teammates working on other features (e.g. `crop-disease`, `Scheme-Recommendation`) can easily pull and use this Login System:
+
+### Option A: Pulling the LoginSystem folder into your branch
+```bash
+git checkout <your-feature-branch>
+git checkout origin/main -- LoginSystem/
 ```
 
-### Backend (`backend/.env`)
-```env
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+### Option B: Merging main into your branch
+```bash
+git checkout <your-feature-branch>
+git pull origin main
 ```
+
+### Setup Steps for Teammates:
+1. Copy `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` into your local `frontend/.env`.
+2. Run `npm install` in `frontend/` (ensure `@supabase/supabase-js` and `lucide-react` are installed).
+3. The entry routes `/` (Role Selection), `/login` (Login), and `/signup` (Sign-up) will work immediately.
+4. For rapid testing without waiting for verification emails, teammates can use the **Sample Developer Login** (`demo.farmer@kisaansathi.org` / `DemoFarmer@2025`) or click **"1-Click Demo"**.
+
