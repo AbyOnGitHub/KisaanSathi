@@ -7,7 +7,7 @@ This folder preserves the complete **Login & Authentication System** for the Kis
 ## Architecture Overview
 
 ```
-LoginSystem/
+backend/backend-loginsystem/
 ├── README.md               # Documentation & setup instructions
 ├── supabase_schema.sql     # Database schema, tables, triggers, and RLS policies
 ├── frontend_auth/
@@ -104,10 +104,10 @@ This allows any teammate running `npm run dev` to log in, sign up, verify email,
 
 Teammates working on other features (e.g. `crop-disease`, `Scheme-Recommendation`) can easily pull and use this Login System:
 
-### Option A: Pulling the LoginSystem folder into your branch
+### Option A: Pulling the backend-loginsystem folder into your branch
 ```bash
 git checkout <your-feature-branch>
-git checkout origin/main -- LoginSystem/
+git checkout origin/main -- backend/backend-loginsystem/
 ```
 
 ### Option B: Merging main into your branch
