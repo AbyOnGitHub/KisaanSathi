@@ -7,17 +7,22 @@ This folder preserves the complete **Login & Authentication System** for the Kis
 ## Architecture Overview
 
 ```
-backend/backend-loginsystem/
-├── README.md               # Documentation & setup instructions
-├── supabase_schema.sql     # Database schema, tables, triggers, and RLS policies
-├── frontend_auth/
-│   ├── RoleSelect.jsx      # Pre-login Role Selection page (Farmer vs Raw Material Dealer / Seller)
-│   ├── Login.jsx           # Role-aware login with Google OAuth & Sample Developer Login
-│   ├── Signup.jsx          # Role-aware registration with Email Link & SMS OTP verification options
-│   ├── ProtectedRoute.jsx  # Route guard checking Supabase session & role
-│   └── supabase.js         # Supabase client configuration
-└── backend_auth/
-    └── auth.py             # FastAPI HTTPBearer JWT verification dependency
+KisaanSathi/
+├── frontend/
+│   └── frontend-loginsystem/
+│       ├── README.md               # Frontend setup instructions
+│       └── frontend_auth/
+│           ├── RoleSelect.jsx      # Pre-login Role Selection page (Farmer vs Seller vs Admin)
+│           ├── Login.jsx           # Role-aware login with Google OAuth & Sample Developer Login
+│           ├── Signup.jsx          # Role-aware registration with Email Link & SMS OTP options
+│           ├── ProtectedRoute.jsx  # Route guard checking Supabase session & role
+│           └── supabase.js         # Supabase client configuration
+└── backend/
+    └── backend-loginsystem/
+        ├── README.md               # Backend documentation & setup
+        ├── supabase_schema.sql     # Database schema, triggers, and RLS policies
+        └── backend_auth/
+            └── auth.py             # FastAPI HTTPBearer JWT verification dependency
 ```
 
 ---

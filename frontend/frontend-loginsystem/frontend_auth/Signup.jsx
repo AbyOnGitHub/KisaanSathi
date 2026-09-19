@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Sprout, Store, Mail, Phone, CheckCircle2, ShieldCheck, ArrowRight, ArrowLeft, AlertTriangle, RefreshCw } from 'lucide-react';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { supabase, isSupabaseConfigured } from './supabase';
 
 export default function Signup() {
   const navigate = useNavigate();
