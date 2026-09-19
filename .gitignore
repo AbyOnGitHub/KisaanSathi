@@ -41,5 +41,42 @@ htmlcov/
 *.swp
 *.swo
 
+# Node / Frontend
+node_modules/
+**/node_modules/
+dist/
+dist-ssr/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
 # macOS
 .DS_Store
+Thumbs.db
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Env anywhere
+**/.env
+**/.env.local
+
+# Python venv anywhere
+**/.venv/
+**/venv/
+
+# Node anywhere
+**/node_modules/
+
+# Build outputs
+**/dist/
+**/build/
+**/__pycache__/
+.kilo/
