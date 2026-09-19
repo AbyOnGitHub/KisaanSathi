@@ -6,7 +6,7 @@ import { LanguageSelector } from '../components/LanguageSelector';
 import { VoiceInputButton } from '../components/VoiceInputButton';
 import { ListenButton } from '../components/ListenButton';
 import { useTTS } from '../hooks/useTTS';
-import { Leaf, ChevronLeft, HelpCircle } from 'lucide-react';
+import { ChevronLeft, HelpCircle } from 'lucide-react';
 
 // Application form fields per scheme
 const SCHEME_FIELDS: Record<string, any[]> = {
@@ -118,15 +118,24 @@ const SCHEME_FIELDS: Record<string, any[]> = {
   ],
 };
 
+const GENERIC_FIELDS: any[] = [
+  { field_name: 'land_survey_no', label_en: 'Land Survey / Gat Number', label_hi: 'भूमि सर्वे / खसरा नंबर', label_mr: 'जमीन सर्वे / गट नंबर', field_type: 'text',
+    help_text_en: 'Enter the survey or gat number from your 7/12 extract.', help_text_hi: 'अपने भूमि रिकॉर्ड से सर्वे/खसरा नंबर लिखें।', help_text_mr: 'तुमच्या 7/12 उताऱ्यावरील सर्वे/गट नंबर लिहा.', required: true },
+  { field_name: 'bank_name', label_en: 'Bank Name', label_hi: 'बैंक का नाम', label_mr: 'बँकेचे नाव', field_type: 'text',
+    help_text_en: 'Name of the bank where you want to receive the benefit.', help_text_hi: 'जिस बैंक में लाभ चाहिए उसका नाम लिखें।', help_text_mr: 'ज्या बँकेत लाभ हवा आहे त्याचे नाव लिहा.', required: true },
+  { field_name: 'purpose', label_en: 'What do you need this scheme for?', label_hi: 'आपको यह योजना किसलिए चाहिए?', label_mr: 'ही योजना कशासाठी हवी आहे?', field_type: 'textarea',
+    help_text_en: 'Briefly describe what you plan to do with the benefit.', help_text_hi: 'संक्षेप में बताएं कि आप लाभ का क्या उपयोग करेंगे।', help_text_mr: 'लाभाचा वापर काय करणार ते थोडक्यात लिहा.', required: false },
+];
+
 export const ApplicationFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   const { farmer } = useFarmer();
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [helpField, setHelpField] = useState<string | null>(null);
 
-  const fields = id ? (SCHEME_FIELDS[id] || []) : [];
+  const fields = id ? (SCHEME_FIELDS[id] || GENERIC_FIELDS) : [];
 
   const updateAnswer = (fieldName: string, value: string) => {
     setAnswers(prev => ({ ...prev, [fieldName]: value }));
@@ -179,11 +188,10 @@ export const ApplicationFormPage: React.FC = () => {
           {fields.map(field => (
             <div key={field.field_name} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
               <div className="flex items-center justify-between mb-2 gap-2">
-                <label className="flex items-center gap-2 text-base font-semibold text-gray-800">
-                  {getLabel(field)}
-                  {field.required && <span className="text-red-500 ml-1">*</span>}
-                  <ListenButton text={getLabel(field)} />
-                </label>
+                <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
+                  <ListenButton text={getLabel(field)} size="md" />
+                  <label>{getLabel(field)}{field.required && <span className="text-red-500 ml-1">*</span>}</label>
+                </div>
                 <button
                   onClick={() => {
                     setHelpField(helpField === field.field_name ? null : field.field_name);

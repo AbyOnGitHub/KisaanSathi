@@ -4,6 +4,8 @@ import { useLanguage } from '../context/LanguageContext';
 import { useFarmer } from '../context/FarmerContext';
 import { ProgressStepper } from '../components/ProgressStepper';
 import { VoiceInputButton } from '../components/VoiceInputButton';
+import { FieldLabel } from '../components/FieldLabel';
+import { ListenButton } from '../components/ListenButton';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { Leaf, ChevronRight, ChevronLeft } from 'lucide-react';
 
@@ -25,10 +27,10 @@ const StepAboutYou: React.FC<{ onNext: () => void }> = ({ onNext }) => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">{t('onboarding_title')}</h2>
+      <div className="flex items-center gap-2 mb-6"><ListenButton size="md" text={t('onboarding_title')} /><h2 className="text-xl md:text-2xl font-bold text-gray-800">{t('onboarding_title')}</h2></div>
 
       <div className="mb-5">
-        <label className="block text-base font-semibold text-gray-700 mb-2">{t('name_label')}</label>
+        <FieldLabel className="block text-base font-semibold text-gray-700 mb-2" text={t('name_label')} />
         <input
           type="text"
           value={farmer.name}
@@ -45,7 +47,7 @@ const StepAboutYou: React.FC<{ onNext: () => void }> = ({ onNext }) => {
       </div>
 
       <div className="mb-5">
-        <label className="block text-base font-semibold text-gray-700 mb-2">{t('age_label')}</label>
+        <FieldLabel className="block text-base font-semibold text-gray-700 mb-2" text={t('age_label')} />
         <input
           type="number"
           value={farmer.age}
@@ -58,7 +60,7 @@ const StepAboutYou: React.FC<{ onNext: () => void }> = ({ onNext }) => {
       </div>
 
       <div className="mb-5">
-        <label className="block text-base font-semibold text-gray-700 mb-2">{t('gender_label')}</label>
+        <FieldLabel className="block text-base font-semibold text-gray-700 mb-2" text={t('gender_label')} />
         <div className="flex gap-3">
           {['male', 'female', 'other'].map(g => (
             <button
@@ -78,7 +80,7 @@ const StepAboutYou: React.FC<{ onNext: () => void }> = ({ onNext }) => {
       </div>
 
       <div className="mb-6">
-        <label className="block text-base font-semibold text-gray-700 mb-2">{t('category_label')}</label>
+        <FieldLabel className="block text-base font-semibold text-gray-700 mb-2" text={t('category_label')} />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {['marginal', 'small', 'medium', 'large', 'women', 'sc'].map(cat => (
             <button
@@ -142,10 +144,10 @@ const StepLocation: React.FC<{ onNext: () => void; onBack: () => void }> = ({ on
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">{t('loc_title')}</h2>
+      <div className="flex items-center gap-2 mb-6"><ListenButton size="md" text={t('loc_title')} /><h2 className="text-xl md:text-2xl font-bold text-gray-800">{t('loc_title')}</h2></div>
 
       <div className="mb-5">
-        <label className="block text-base font-semibold text-gray-700 mb-2">{t('state_label')}</label>
+        <FieldLabel className="block text-base font-semibold text-gray-700 mb-2" text={t('state_label')} />
         <select
           value={farmer.state}
           onChange={e => { updateFarmer({ state: e.target.value, district: '' }); }}
@@ -158,7 +160,7 @@ const StepLocation: React.FC<{ onNext: () => void; onBack: () => void }> = ({ on
       </div>
 
       <div className="mb-5">
-        <label className="block text-base font-semibold text-gray-700 mb-2">{t('district_label')}</label>
+        <FieldLabel className="block text-base font-semibold text-gray-700 mb-2" text={t('district_label')} />
         {farmer.state === 'Maharashtra' ? (
           <select
             value={farmer.district}
@@ -181,7 +183,7 @@ const StepLocation: React.FC<{ onNext: () => void; onBack: () => void }> = ({ on
       </div>
 
       <div className="mb-5">
-        <label className="block text-base font-semibold text-gray-700 mb-2">{t('taluka_label')}</label>
+        <FieldLabel className="block text-base font-semibold text-gray-700 mb-2" text={t('taluka_label')} />
         <input
           type="text"
           value={farmer.taluka}
@@ -191,7 +193,7 @@ const StepLocation: React.FC<{ onNext: () => void; onBack: () => void }> = ({ on
       </div>
 
       <div className="mb-6">
-        <label className="block text-base font-semibold text-gray-700 mb-2">{t('village_label')}</label>
+        <FieldLabel className="block text-base font-semibold text-gray-700 mb-2" text={t('village_label')} />
         <input
           type="text"
           value={farmer.village}
@@ -227,10 +229,10 @@ const StepFarm: React.FC<{ onNext: () => void; onBack: () => void }> = ({ onNext
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">{t('farm_title')}</h2>
+      <div className="flex items-center gap-2 mb-6"><ListenButton size="md" text={t('farm_title')} /><h2 className="text-xl md:text-2xl font-bold text-gray-800">{t('farm_title')}</h2></div>
 
       <div className="mb-5">
-        <label className="block text-base font-semibold text-gray-700 mb-2">{t('land_area_label')}</label>
+        <FieldLabel className="block text-base font-semibold text-gray-700 mb-2" text={t('land_area_label')} />
         <div className="flex gap-3">
           <input
             type="number"
@@ -259,7 +261,7 @@ const StepFarm: React.FC<{ onNext: () => void; onBack: () => void }> = ({ onNext
       </div>
 
       <div className="mb-5">
-        <label className="block text-base font-semibold text-gray-700 mb-3">{t('irrigation_label')}</label>
+        <FieldLabel className="block text-base font-semibold text-gray-700 mb-3" text={t('irrigation_label')} />
         <div className="flex gap-3">
           {[true, false].map(val => (
             <button
@@ -279,7 +281,7 @@ const StepFarm: React.FC<{ onNext: () => void; onBack: () => void }> = ({ onNext
 
       {farmer.irrigation_availability && (
         <div className="mb-5">
-          <label className="block text-base font-semibold text-gray-700 mb-2">{t('irrigation_type_label')}</label>
+          <FieldLabel className="block text-base font-semibold text-gray-700 mb-2" text={t('irrigation_type_label')} />
           <div className="grid grid-cols-2 gap-3">
             {['drip', 'sprinkler', 'canal', 'well'].map(type => (
               <button
@@ -333,7 +335,7 @@ const StepCrops: React.FC<{ onNext: () => void; onBack: () => void }> = ({ onNex
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">{t('crop_title')}</h2>
+      <div className="flex items-center gap-2 mb-6"><ListenButton size="md" text={t('crop_title')} /><h2 className="text-xl md:text-2xl font-bold text-gray-800">{t('crop_title')}</h2></div>
 
       {farmer.crops.map((crop, idx) => (
         <div key={idx} className="bg-gray-50 rounded-2xl p-4 mb-4 border border-gray-200">
@@ -347,7 +349,7 @@ const StepCrops: React.FC<{ onNext: () => void; onBack: () => void }> = ({ onNex
           </div>
 
           <div className="mb-3">
-            <label className="block text-sm font-medium text-gray-600 mb-1">{t('crop_label')}</label>
+            <FieldLabel className="block text-sm font-medium text-gray-600 mb-1" text={t('crop_label')} />
             <input
               type="text"
               value={crop.crop}
@@ -358,7 +360,7 @@ const StepCrops: React.FC<{ onNext: () => void; onBack: () => void }> = ({ onNex
           </div>
 
           <div className="mb-3">
-            <label className="block text-sm font-medium text-gray-600 mb-1">{t('season_label')}</label>
+            <FieldLabel className="block text-sm font-medium text-gray-600 mb-1" text={t('season_label')} />
             <div className="grid grid-cols-2 gap-2">
               {['kharif', 'rabi', 'zaid', 'perennial'].map(s => (
                 <button
@@ -377,7 +379,7 @@ const StepCrops: React.FC<{ onNext: () => void; onBack: () => void }> = ({ onNex
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">{t('area_label')}</label>
+            <FieldLabel className="block text-sm font-medium text-gray-600 mb-1" text={t('area_label')} />
             <input
               type="number"
               value={crop.cultivated_area}
@@ -449,8 +451,8 @@ const StepNeed: React.FC<{ onNext: () => void; onBack: () => void }> = ({ onNext
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-800 mb-2">{t('need_title')}</h2>
-      <p className="text-gray-500 mb-5">{t('need_sub')}</p>
+      <div className="flex items-center gap-2 mb-2"><ListenButton size="md" text={t('need_title')} /><h2 className="text-xl md:text-2xl font-bold text-gray-800">{t('need_title')}</h2></div>
+      <p className="text-gray-500 mb-5 flex items-center gap-2"><ListenButton text={t('need_sub')} />{t('need_sub')}</p>
 
       <VoiceInputButton className="mb-5" size="md"
         prompt="🎤 Tell us what you need"

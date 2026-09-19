@@ -1,5 +1,6 @@
 import { useState, useEffect, type FormEvent, type ChangeEvent } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { FieldLabel } from '../components/FieldLabel';
 import { Sprout, Store, Mail, Phone, CheckCircle2, ShieldCheck, ArrowRight, ArrowLeft } from 'lucide-react';
 import { supabase, type UserRole } from '../lib/supabase';
 
@@ -220,7 +221,7 @@ export default function Signup() {
 
             <form className="space-y-4" onSubmit={handleSignup}>
               <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase mb-1">Selected Role</label>
+                <FieldLabel lang="en" className="block text-xs font-semibold text-gray-700 uppercase mb-1" text="Selected Role" />
                 <select
                   name="role"
                   value={selectedRole}
@@ -233,22 +234,22 @@ export default function Signup() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase mb-1">Full Name</label>
+                <FieldLabel lang="en" className="block text-xs font-semibold text-gray-700 uppercase mb-1" text="Full Name" />
                 <input name="fullName" type="text" required className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="e.g. Ramesh Kumar" value={formData.fullName} onChange={handleChange} />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase mb-1">Google Email Address (Gmail)</label>
+                <FieldLabel lang="en" className="block text-xs font-semibold text-gray-700 uppercase mb-1" text="Google Email Address (Gmail)" />
                 <input name="email" type="email" required className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="your.email@gmail.com" value={formData.email} onChange={handleChange} />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase mb-1">Phone Number (10 digits)</label>
+                <FieldLabel lang="en" className="block text-xs font-semibold text-gray-700 uppercase mb-1" text="Phone Number (10 digits)" />
                 <input name="phone" type="tel" required className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="9876543210" value={formData.phone} onChange={handleChange} />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase mb-1">Password</label>
+                <FieldLabel lang="en" className="block text-xs font-semibold text-gray-700 uppercase mb-1" text="Password" />
                 <input name="password" type="password" required minLength={6} className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="At least 6 characters" value={formData.password} onChange={handleChange} />
               </div>
 
@@ -265,7 +266,7 @@ export default function Signup() {
               )}
 
               <div className="pt-2 border-t border-gray-200">
-                <label className="block text-xs font-semibold text-gray-700 uppercase mb-2">Choose Verification Method:</label>
+                <FieldLabel lang="en" className="block text-xs font-semibold text-gray-700 uppercase mb-2" text="Choose Verification Method:" />
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"

@@ -1,5 +1,6 @@
 import { useState, useEffect, type FormEvent, type ChangeEvent } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { FieldLabel } from '../components/FieldLabel';
 import { Sprout, Store, Shield, ArrowRight, Sparkles, KeyRound, ArrowLeft } from 'lucide-react';
 import { supabase, type UserRole } from '../lib/supabase';
 
@@ -290,7 +291,7 @@ export default function Login() {
         <form className="space-y-4" onSubmit={handleLogin}>
           <div className="space-y-3">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 uppercase mb-1">Email Address</label>
+              <FieldLabel lang="en" className="block text-xs font-semibold text-gray-700 uppercase mb-1" text="Email Address" />
               <input
                 name="email"
                 type="email"
@@ -302,7 +303,7 @@ export default function Login() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 uppercase mb-1">Password</label>
+              <FieldLabel lang="en" className="block text-xs font-semibold text-gray-700 uppercase mb-1" text="Password" />
               <input
                 name="password"
                 type="password"

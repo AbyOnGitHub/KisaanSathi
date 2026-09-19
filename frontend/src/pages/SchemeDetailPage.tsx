@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { useTTS } from '../hooks/useTTS';
-import { Leaf, Volume2, FileText, ExternalLink, ChevronLeft, CheckCircle } from 'lucide-react';
+import { SCHEMES, toDetail } from '../data/schemes';
+import { Volume2, FileText, ExternalLink, ChevronLeft, CheckCircle } from 'lucide-react';
 
 const SCHEME_DATA: Record<string, any> = {
   '1': {
@@ -132,7 +133,8 @@ export const SchemeDetailPage: React.FC = () => {
   const { t, language } = useLanguage();
   const { speak } = useTTS();
 
-  const scheme = id ? SCHEME_DATA[id] : null;
+  const catalogItem = SCHEMES.find(x => x.id === id);
+  const scheme = id ? (SCHEME_DATA[id] || (catalogItem ? toDetail(catalogItem) : null)) : null;
 
   if (!scheme) {
     return (
@@ -180,9 +182,11 @@ export const SchemeDetailPage: React.FC = () => {
             <span className="bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full uppercase">
               {t('potentially_eligible')}
             </span>
-            <span className="bg-gray-100 text-gray-500 text-xs px-3 py-1 rounded-full">
-              {t('last_verified')}: {scheme.last_verified_at}
-            </span>
+            {scheme.last_verified_at && (
+              <span className="bg-gray-100 text-gray-500 text-xs px-3 py-1 rounded-full">
+                {t('last_verified')}: {scheme.last_verified_at}
+              </span>
+            )}
           </div>
           <h1 className="text-3xl font-extrabold text-gray-900">{getField('name')}</h1>
           <p className="text-gray-500 text-sm mt-1">{scheme.source_name}</p>

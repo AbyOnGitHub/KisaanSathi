@@ -1,12 +1,5 @@
 import React from 'react';
-import { useLanguage } from '../context/LanguageContext';
 import { Check } from 'lucide-react';
-
-interface Step {
-  label: string;
-  completed: boolean;
-  active: boolean;
-}
 
 interface ProgressStepperProps {
   steps: string[];

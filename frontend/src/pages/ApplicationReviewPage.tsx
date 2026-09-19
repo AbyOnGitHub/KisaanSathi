@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useFarmer } from '../context/FarmerContext';
 import { LanguageSelector } from '../components/LanguageSelector';
+import { SCHEMES } from '../data/schemes';
 import { ChevronLeft, CheckCircle, ExternalLink } from 'lucide-react';
 
 const SCHEME_OFFICIAL_URLS: Record<string, string> = {
@@ -29,8 +30,9 @@ export const ApplicationReviewPage: React.FC = () => {
 
   const state = location.state as { answers?: Record<string, string>; scheme_id?: string } | null;
   const answers = state?.answers || {};
-  const officialUrl = id ? SCHEME_OFFICIAL_URLS[id] : '#';
-  const schemeName = id ? (SCHEME_NAMES[id]?.[language] || SCHEME_NAMES[id]?.en) : 'Unknown Scheme';
+  const cat = SCHEMES.find(x => x.id === id);
+  const officialUrl = id ? (SCHEME_OFFICIAL_URLS[id] || cat?.source_url || '#') : '#';
+  const schemeName = id ? (SCHEME_NAMES[id]?.[language] || SCHEME_NAMES[id]?.en || (cat && ((cat as any)[`name_${language}`] || cat.name_en)) || 'Scheme') : 'Unknown Scheme';
 
   const ReviewSection: React.FC<{ title: string; items: { label: string; value: string }[] }> = ({
     title, items,
