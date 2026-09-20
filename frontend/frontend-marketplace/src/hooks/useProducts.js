@@ -1,56 +1,87 @@
 /**
  * Custom hook for fetching, filtering, and paginating products directly from the FastAPI backend.
  * Zero mock data fallback — returns empty array if no matching items found.
+ * Fully reactive to URL search query parameters and filter changes.
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import api from '../utils/api';
 
-export const useProducts = (initialFilters = {}) => {
+export const useProducts = (filters = {}) => {
   const [products, setProducts] = useState([]);
   const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(initialFilters.page || 1);
-  const [limit, setLimit] = useState(initialFilters.limit || 20);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchProducts = useCallback(async (filters = {}) => {
+  const {
+    search = '',
+    category = '',
+    min_price = null,
+    max_price = null,
+    sort_by = 'created_at',
+    page = 1,
+    limit = 20,
+  } = filters;
+
+  const currentRequestId = useRef(0);
+
+  const fetchProducts = useCallback(async (overrideFilters = null) => {
+    const activeFilters = overrideFilters !== null ? overrideFilters : {
+      search,
+      category,
+      min_price,
+      max_price,
+      sort_by,
+      page,
+      limit,
+    };
+
+    const reqId = ++currentRequestId.current;
     setLoading(true);
     setError(null);
+
     try {
       const params = {
-        page: filters.page || page,
-        limit: filters.limit || limit,
-        ...(filters.category && { category: filters.category }),
-        ...(filters.search && { search: filters.search }),
-        ...(filters.min_price && { min_price: filters.min_price }),
-        ...(filters.max_price && { max_price: filters.max_price }),
-        ...(filters.sort_by && { sort_by: filters.sort_by }),
+        page: activeFilters.page || 1,
+        limit: activeFilters.limit || 20,
+        ...(activeFilters.category && { category: activeFilters.category }),
+        ...(activeFilters.search && activeFilters.search.trim() && { search: activeFilters.search.trim() }),
+        ...(activeFilters.min_price !== null && activeFilters.min_price !== undefined && activeFilters.min_price !== '' && { min_price: Number(activeFilters.min_price) }),
+        ...(activeFilters.max_price !== null && activeFilters.max_price !== undefined && activeFilters.max_price !== '' && { max_price: Number(activeFilters.max_price) }),
+        ...(activeFilters.sort_by && { sort_by: activeFilters.sort_by }),
       };
 
       const res = await api.get('/products/', { params });
-      if (res.data?.data) {
-        setProducts(res.data.data);
-        setTotal(res.data.total ?? res.data.data.length);
-      } else if (Array.isArray(res.data)) {
-        setProducts(res.data);
-        setTotal(res.data.length);
-      } else {
+
+      // Only update state if this is the most recent request
+      if (reqId === currentRequestId.current) {
+        if (res.data?.data) {
+          setProducts(res.data.data);
+          setTotal(res.data.total ?? res.data.data.length);
+        } else if (Array.isArray(res.data)) {
+          setProducts(res.data);
+          setTotal(res.data.length);
+        } else {
+          setProducts([]);
+          setTotal(0);
+        }
+      }
+    } catch (err) {
+      if (reqId === currentRequestId.current) {
+        console.error('Error fetching products from API:', err);
+        setError(err.response?.data?.detail || 'Failed to load products');
         setProducts([]);
         setTotal(0);
       }
-    } catch (err) {
-      console.error('Error fetching products from API:', err);
-      setError(err.response?.data?.detail || 'Failed to load products');
-      setProducts([]);
-      setTotal(0);
     } finally {
-      setLoading(false);
+      if (reqId === currentRequestId.current) {
+        setLoading(false);
+      }
     }
-  }, [page, limit]);
+  }, [search, category, min_price, max_price, sort_by, page, limit]);
 
   useEffect(() => {
-    fetchProducts(initialFilters);
+    fetchProducts();
   }, [fetchProducts]);
 
   return {
@@ -58,7 +89,6 @@ export const useProducts = (initialFilters = {}) => {
     total,
     page,
     limit,
-    setPage,
     loading,
     error,
     refetch: fetchProducts,

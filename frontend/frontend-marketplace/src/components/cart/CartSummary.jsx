@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ShieldCheck, Truck, ArrowRight, Tag } from 'lucide-react';
 import Button from '../common/Button';
 import { formatPrice } from '../../utils/formatters';
@@ -15,6 +16,8 @@ export const CartSummary = ({
   isCheckout = false,
   isLoading = false,
 }) => {
+  const { t } = useTranslation();
+
   // Compute savings
   let originalMrpTotal = 0;
   let bargainSavings = 0;
@@ -37,18 +40,18 @@ export const CartSummary = ({
   return (
     <div className="bg-white rounded-lg border border-agri-border p-5 sticky top-24 shadow-card text-xs">
       <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wider pb-3 border-b border-gray-100">
-        Price Details ({items.length} {items.length === 1 ? 'Item' : 'Items'})
+        {t('cart.order_summary')} ({items.length})
       </h3>
 
       <div className="py-3 space-y-2.5 text-gray-600 border-b border-gray-100">
         <div className="flex justify-between">
-          <span>Total MRP</span>
+          <span>{t('common.mrp')}</span>
           <span>{formatPrice(originalMrpTotal || totalAmount)}</span>
         </div>
 
         {totalDiscount > 0 && (
           <div className="flex justify-between text-agri-primary font-semibold">
-            <span>Product Discounts</span>
+            <span>{t('common.discount')}</span>
             <span>-{formatPrice(totalDiscount)}</span>
           </div>
         )}
@@ -57,17 +60,17 @@ export const CartSummary = ({
           <div className="flex justify-between text-amber-700 font-bold">
             <span className="flex items-center gap-1">
               <Tag className="w-3.5 h-3.5" />
-              <span>Bargain Negotiations</span>
+              <span>{t('cart.bargain_savings')}</span>
             </span>
             <span>-{formatPrice(bargainSavings)}</span>
           </div>
         )}
 
         <div className="flex justify-between">
-          <span>Delivery Charges</span>
+          <span>{t('cart.delivery_charges')}</span>
           <span className="text-agri-primary font-bold">
             <span className="line-through text-gray-400 font-normal mr-1">₹80</span>
-            FREE
+            {t('cart.free')}
           </span>
         </div>
       </div>
@@ -75,12 +78,12 @@ export const CartSummary = ({
       {/* Grand Total */}
       <div className="py-3 border-b border-gray-100">
         <div className="flex justify-between items-baseline">
-          <span className="text-sm font-bold text-gray-900">Total Amount</span>
+          <span className="text-sm font-bold text-gray-900">{t('cart.amount_payable')}</span>
           <span className="text-xl font-black text-gray-900">{formatPrice(totalAmount)}</span>
         </div>
         {totalSavings > 0 && (
           <p className="text-[11px] font-bold text-agri-primary mt-1">
-            🎉 You will save {formatPrice(totalSavings)} on this order!
+            🎉 {t('common.you_save', { amount: formatPrice(totalSavings), discount: Math.round((totalSavings / (originalMrpTotal || 1)) * 100) })}
           </p>
         )}
       </div>
@@ -103,11 +106,11 @@ export const CartSummary = ({
       <div className="mt-4 pt-3 border-t border-gray-100 space-y-2 text-[11px] text-gray-500">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-agri-primary flex-shrink-0" />
-          <span>Safe & Secure Payments with 100% Buyer Protection</span>
+          <span>{t('common.buyer_protection')}</span>
         </div>
         <div className="flex items-center gap-2">
           <Truck className="w-4 h-4 text-blue-600 flex-shrink-0" />
-          <span>Direct doorstep delivery to your farm PIN code</span>
+          <span>{t('home.trust_2_desc')}</span>
         </div>
       </div>
     </div>

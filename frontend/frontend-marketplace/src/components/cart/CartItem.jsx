@@ -4,11 +4,13 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Trash2, Plus, Minus, CheckCircle2, MessageSquareQuote } from 'lucide-react';
 import { formatPrice, getEstimatedDeliveryDate } from '../../utils/formatters';
 import { useCart } from '../../context/CartContext';
 
 export const CartItem = ({ item }) => {
+  const { t } = useTranslation();
   const { updateQuantity, removeFromCart } = useCart();
   const product = item.product || {};
 
@@ -42,7 +44,7 @@ export const CartItem = ({ item }) => {
           </Link>
 
           <p className="text-xs text-gray-500 mt-0.5 flex items-center gap-1">
-            <span>Sold by: <strong>{product.seller?.business_name || product.seller?.full_name || 'Agri Seller'}</strong></span>
+            <span>{t('common.by_seller', { name: product.seller?.business_name || product.seller?.full_name || t('product.seller_verified_badge') })}</span>
             {product.seller?.is_verified && <CheckCircle2 className="w-3 h-3 text-agri-primary" />}
           </p>
 
@@ -50,14 +52,14 @@ export const CartItem = ({ item }) => {
           {isBargained && (
             <div className="inline-flex items-center gap-1 bg-amber-50 border border-amber-300 text-amber-900 text-[11px] font-bold px-2 py-0.5 rounded-full mt-1.5">
               <MessageSquareQuote className="w-3 h-3 text-agri-accent" />
-              <span>🤝 Bargained Price Applied</span>
+              <span>{t('cart.bargained_deal_applied', { price: formatPrice(effectiveUnitPrice), unit: product.unit || 'unit' })}</span>
             </div>
           )}
 
           {/* In Stock & Delivery */}
           <div className="text-[11px] text-gray-600 mt-1.5 flex flex-wrap items-center gap-3">
-            <span className="text-agri-primary font-semibold">✓ In Stock</span>
-            <span>Delivery by <strong className="text-gray-900">{deliveryDate}</strong></span>
+            <span className="text-agri-primary font-semibold">✓ {t('common.in_stock')}</span>
+            <span>{t('common.free_delivery_by', { date: deliveryDate })}</span>
           </div>
         </div>
       </div>
@@ -104,7 +106,7 @@ export const CartItem = ({ item }) => {
           <button
             onClick={() => removeFromCart(item.product_id)}
             className="text-gray-400 hover:text-red-600 p-1 transition"
-            title="Remove item"
+            title={t('cart.remove')}
             aria-label="Remove item"
           >
             <Trash2 className="w-4 h-4" />

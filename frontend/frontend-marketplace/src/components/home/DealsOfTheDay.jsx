@@ -4,10 +4,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Flame, Clock, ArrowRight } from 'lucide-react';
 import ProductCard from '../product/ProductCard';
 
 export const DealsOfTheDay = ({ products = [], onBargainClick = null }) => {
+  const { t } = useTranslation();
   // 12-hour countdown timer
   const [timeLeft, setTimeLeft] = useState({ hours: 7, minutes: 42, seconds: 19 });
 
@@ -39,13 +41,13 @@ export const DealsOfTheDay = ({ products = [], onBargainClick = null }) => {
           </div>
           <div>
             <h3 className="text-base sm:text-lg font-black text-gray-900 tracking-tight flex items-center gap-2">
-              <span>Deals of the Day</span>
+              <span>{t('home.deals_title')}</span>
               <span className="text-xs font-bold bg-agri-hot text-white px-2 py-0.5 rounded-full">
-                HOT OFFERS
+                {t('home.hot_offers')}
               </span>
             </h3>
             <p className="text-xs text-gray-500">
-              Limited inventory at subsidized seasonal wholesale prices
+              {t('home.deals_sub')}
             </p>
           </div>
         </div>
@@ -54,7 +56,7 @@ export const DealsOfTheDay = ({ products = [], onBargainClick = null }) => {
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <div className="flex items-center gap-1 text-xs text-red-700 font-bold bg-white px-3 py-1.5 rounded-md border border-red-300 shadow-2xs">
             <Clock className="w-4 h-4 text-agri-hot animate-spin" style={{ animationDuration: '6s' }} />
-            <span>Ends in:</span>
+            <span>{t('home.ends_in')}</span>
             <span className="font-mono font-black text-gray-900">
               {String(timeLeft.hours).padStart(2, '0')}h : {String(timeLeft.minutes).padStart(2, '0')}m : {String(timeLeft.seconds).padStart(2, '0')}s
             </span>
@@ -64,7 +66,7 @@ export const DealsOfTheDay = ({ products = [], onBargainClick = null }) => {
             to="/products?sort_by=discount"
             className="text-xs font-bold text-agri-primary hover:underline flex items-center gap-0.5"
           >
-            <span>See All</span>
+            <span>{t('common.see_all')}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>

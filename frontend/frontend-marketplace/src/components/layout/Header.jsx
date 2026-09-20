@@ -1,10 +1,12 @@
 /**
  * 3-Row Sticky Header inspired by Amazon India & Flipkart.
  * Connected to live Supabase session and FastAPI endpoints.
+ * Fully reactive search bar with instant URL sync, clear button, and EN/HI language toggle.
  */
 
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Search,
   ShoppingCart,
@@ -18,14 +20,18 @@ import {
   Menu,
   X,
   Package,
+  Mic,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { useBargainSessions } from '../../hooks/useBargainSessions';
+import { useVoiceSearch, sanitizeSpeechTranscript } from '../../hooks/useVoiceSearch';
 import api from '../../utils/api';
 
 export const Header = () => {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, profile, isFarmer, isSeller, logout } = useAuth();
   const { totalItems } = useCart();
   const { sessions } = useBargainSessions();
@@ -36,12 +42,49 @@ export const Header = () => {
   const [pincode, setPincode] = useState('440001 (Nagpur)');
   const [isEditingPincode, setIsEditingPincode] = useState(false);
   const [tempPincode, setTempPincode] = useState('440001');
-  const [lang, setLang] = useState('EN');
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Active open bargain sessions count
   const activeBargainsCount = (sessions || []).filter((s) => s.status === 'open').length;
+
+  const handleVoiceResult = (finalText) => {
+    const cleanText = sanitizeSpeechTranscript(finalText);
+    if (!cleanText) return;
+    setSearchQuery(cleanText);
+    const params = new URLSearchParams();
+    params.set('search', cleanText);
+    if (selectedCategory) {
+      params.set('category', selectedCategory);
+    }
+    const queryString = params.toString();
+    navigate(queryString ? `/products?${queryString}` : '/products');
+  };
+
+  const {
+    isListening,
+    transcript,
+    isSupported,
+    toggleListening,
+  } = useVoiceSearch({
+    onResult: handleVoiceResult,
+  });
+
+  // Display live transcript in the search input while speaking
+  useEffect(() => {
+    if (isListening && transcript) {
+      setSearchQuery(transcript);
+    }
+  }, [isListening, transcript]);
+
+  // Pre-fill search query and category from URL whenever location search params change
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const searchParam = params.get('search') || '';
+    const catParam = params.get('category') || '';
+    setSearchQuery(searchParam);
+    setSelectedCategory(catParam);
+  }, [location.search]);
 
   useEffect(() => {
     const fetchCats = async () => {
@@ -55,12 +98,35 @@ export const Header = () => {
     fetchCats();
   }, []);
 
+  const toggleLanguage = () => {
+    const newLang = i18n.language === 'hi' ? 'en' : 'hi';
+    i18n.changeLanguage(newLang);
+  };
+
   const handleSearch = (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
+    const cleanText = sanitizeSpeechTranscript(searchQuery);
     const params = new URLSearchParams();
-    if (searchQuery.trim()) params.set('search', searchQuery.trim());
-    if (selectedCategory) params.set('category', selectedCategory);
-    navigate(`/products?${params.toString()}`);
+    
+    if (cleanText) {
+      params.set('search', cleanText);
+    }
+    if (selectedCategory) {
+      params.set('category', selectedCategory);
+    }
+    
+    const queryString = params.toString();
+    navigate(queryString ? `/products?${queryString}` : '/products');
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    if (location.pathname.startsWith('/products')) {
+      const params = new URLSearchParams(location.search);
+      params.delete('search');
+      const queryString = params.toString();
+      navigate(queryString ? `/products?${queryString}` : '/products');
+    }
   };
 
   const handlePincodeSubmit = (e) => {
@@ -79,7 +145,7 @@ export const Header = () => {
           {/* Left: Location / Pincode */}
           <div className="flex items-center gap-1.5 text-green-100">
             <MapPin className="w-3.5 h-3.5 text-agri-accent" />
-            <span>Deliver to:</span>
+            <span>{t('nav.deliver_to')}</span>
             {isEditingPincode ? (
               <form onSubmit={handlePincodeSubmit} className="flex items-center gap-1 ml-1">
                 <input
@@ -90,7 +156,7 @@ export const Header = () => {
                   autoFocus
                 />
                 <button type="submit" className="text-agri-accent font-bold hover:underline">
-                  Save
+                  {t('common.save')}
                 </button>
               </form>
             ) : (
@@ -106,19 +172,21 @@ export const Header = () => {
 
           {/* Right: Quick Utility Links */}
           <div className="flex items-center gap-4 text-green-100">
-            {/* Language Toggle */}
+            {/* Language Toggle (EN ↔ HI) */}
             <button
-              onClick={() => setLang(lang === 'EN' ? 'HI' : 'EN')}
-              className="hidden sm:flex items-center gap-1 hover:text-white"
+              id="lang-toggle-btn"
+              onClick={toggleLanguage}
+              className="flex items-center gap-1 bg-green-900/70 hover:bg-green-800 border border-green-700/80 px-2 py-0.5 rounded text-white transition font-medium"
+              title="Change Language"
             >
-              <Languages className="w-3.5 h-3.5" />
-              <span>{lang === 'EN' ? 'English (EN)' : 'हिंदी (HI)'}</span>
+              <Languages className="w-3.5 h-3.5 text-agri-accent" />
+              <span>{i18n.language === 'hi' ? t('nav.hindi') : t('nav.english')}</span>
             </button>
 
             {/* Customer Care */}
             <a href="tel:18001234567" className="hidden lg:flex items-center gap-1 hover:text-white">
               <PhoneCall className="w-3.5 h-3.5 text-agri-accent" />
-              <span>1800-AGRI-MART</span>
+              <span>{t('nav.customer_care')}</span>
             </a>
 
             {/* Seller Central Link */}
@@ -128,11 +196,11 @@ export const Header = () => {
                 className="flex items-center gap-1 font-semibold text-agri-accent hover:underline bg-green-900/80 px-2 py-0.5 rounded"
               >
                 <Store className="w-3.5 h-3.5" />
-                <span>Seller Dashboard</span>
+                <span>{t('nav.seller_dashboard')}</span>
               </Link>
             ) : (
               <span className="text-[11px] text-green-200">
-                Farmer Direct Portal
+                {t('nav.farmer_portal')}
               </span>
             )}
           </div>
@@ -152,7 +220,7 @@ export const Header = () => {
                 Agri<span className="text-agri-accent">Mart</span>
               </span>
               <span className="hidden sm:block text-[9px] font-bold text-green-200 tracking-wider -mt-1">
-                BHARAT KA KRISHI BAZAAR
+                {t('nav.subtitle')}
               </span>
             </div>
           </Link>
@@ -166,7 +234,7 @@ export const Header = () => {
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="bg-gray-100 text-xs font-semibold text-gray-700 px-3 py-2 border-r border-gray-300 outline-none cursor-pointer hover:bg-gray-200"
               >
-                <option value="">All Categories</option>
+                <option value="">{t('nav.all_categories')}</option>
                 {categories.map((cat) => (
                   <option key={cat.id || cat.slug} value={cat.slug || cat.id}>
                     {cat.name}
@@ -174,20 +242,61 @@ export const Header = () => {
                 ))}
               </select>
 
-              {/* Search Text Input */}
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search seeds, fertilizers, pesticides, sprayers, drip pipes..."
-                className="flex-1 px-3 py-2 text-sm text-gray-900 outline-none"
-              />
+              {/* Search Text Input with Clear & Mic Buttons */}
+              <div className="relative flex-1 flex items-center">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={isListening ? t('nav.voice_listening') : t('nav.search_placeholder')}
+                  className={`w-full px-3 py-2 text-sm text-gray-900 outline-none transition-colors ${
+                    isListening ? 'bg-red-50/70 placeholder-red-600 font-medium' : 'bg-white'
+                  } ${searchQuery ? 'pr-16' : 'pr-9'}`}
+                />
+                
+                {/* Clear "X" Button */}
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={handleClearSearch}
+                    className="absolute right-9 text-gray-400 hover:text-gray-700 p-0.5 rounded-full hover:bg-gray-100 transition"
+                    title={t('common.clear')}
+                    aria-label={t('common.clear')}
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+
+                {/* Mic Voice Search Button */}
+                <button
+                  type="button"
+                  onClick={toggleListening}
+                  disabled={!isSupported}
+                  className={`absolute right-1.5 p-1.5 rounded-full transition-all flex items-center justify-center ${
+                    isListening
+                      ? 'bg-red-500 text-white animate-pulse shadow-md ring-2 ring-red-300'
+                      : isSupported
+                      ? 'text-gray-500 hover:text-agri-primary hover:bg-gray-100'
+                      : 'text-gray-300 cursor-not-allowed'
+                  }`}
+                  title={
+                    !isSupported
+                      ? t('nav.voice_not_supported')
+                      : isListening
+                      ? t('nav.voice_listening')
+                      : t('nav.voice_search_aria')
+                  }
+                  aria-label={t('nav.voice_search_aria')}
+                >
+                  <Mic className={`w-4 h-4 ${isListening ? 'animate-bounce' : ''}`} />
+                </button>
+              </div>
 
               {/* Search Submit Button */}
               <button
                 type="submit"
                 className="bg-agri-accent hover:bg-amber-600 text-white px-5 py-2 flex items-center justify-center transition"
-                aria-label="Search"
+                aria-label={t('nav.search_aria')}
               >
                 <Search className="w-5 h-5 text-gray-900 font-bold" />
               </button>
@@ -200,7 +309,7 @@ export const Header = () => {
             <Link
               to="/bargains"
               className="flex items-center gap-1.5 text-white hover:text-agri-accent relative p-1 rounded-md transition"
-              title="Bargain Negotiations"
+              title={t('nav.bargains')}
             >
               <div className="relative">
                 <MessageSquareQuote className="w-6 h-6" />
@@ -211,7 +320,7 @@ export const Header = () => {
                 )}
               </div>
               <span className="hidden xl:inline text-xs font-semibold leading-tight">
-                Bargains
+                {t('nav.bargains')}
               </span>
             </Link>
 
@@ -220,8 +329,8 @@ export const Header = () => {
               to="/orders"
               className="hidden sm:flex flex-col text-left hover:text-agri-accent transition"
             >
-              <span className="text-[10px] text-green-200 leading-none">Returns</span>
-              <span className="text-xs font-bold leading-tight">& Orders</span>
+              <span className="text-[10px] text-green-200 leading-none">{t('nav.returns_and_orders')}</span>
+              <span className="text-xs font-bold leading-tight">{t('nav.orders')}</span>
             </Link>
 
             {/* Cart Icon with Live Badge (Only for buyer/farmer) */}
@@ -238,7 +347,7 @@ export const Header = () => {
                     </span>
                   )}
                 </div>
-                <span className="hidden sm:inline text-sm font-bold">Cart</span>
+                <span className="hidden sm:inline text-sm font-bold">{t('nav.cart')}</span>
               </Link>
             )}
 
@@ -253,10 +362,10 @@ export const Header = () => {
                 </div>
                 <div className="hidden lg:block">
                   <span className="text-[10px] text-green-200 block leading-none">
-                    Hello, {profile?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'User'}
+                    {t('nav.hello_user', { name: profile?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'User' })}
                   </span>
                   <span className="text-xs font-bold flex items-center gap-0.5 leading-tight">
-                    Account <ChevronDown className="w-3 h-3" />
+                    {t('nav.account')} <ChevronDown className="w-3 h-3" />
                   </span>
                 </div>
               </button>
@@ -268,7 +377,7 @@ export const Header = () => {
                   onMouseLeave={() => setAccountMenuOpen(false)}
                 >
                   <div className="px-4 py-2 border-b border-gray-100 bg-gray-50">
-                    <p className="text-xs text-gray-500 font-medium">Signed in as</p>
+                    <p className="text-xs text-gray-500 font-medium">{t('nav.signed_in_as')}</p>
                     <p className="text-sm font-bold text-gray-900 truncate">
                       {profile?.business_name || profile?.full_name || user?.email || 'AgriMart User'}
                     </p>
@@ -283,7 +392,7 @@ export const Header = () => {
                     className="flex items-center gap-2 px-4 py-2 text-xs font-medium text-gray-700 hover:bg-gray-100"
                   >
                     <Package className="w-4 h-4 text-gray-500" />
-                    My Orders
+                    {t('nav.my_orders')}
                   </Link>
 
                   <Link
@@ -292,7 +401,7 @@ export const Header = () => {
                     className="flex items-center gap-2 px-4 py-2 text-xs font-medium text-gray-700 hover:bg-gray-100"
                   >
                     <MessageSquareQuote className="w-4 h-4 text-gray-500" />
-                    My Bargains ({activeBargainsCount})
+                    {t('nav.my_bargains', { count: activeBargainsCount })}
                   </Link>
 
                   {isSeller && (
@@ -302,7 +411,7 @@ export const Header = () => {
                       className="flex items-center gap-2 px-4 py-2 text-xs font-medium text-gray-700 hover:bg-gray-100"
                     >
                       <Store className="w-4 h-4 text-gray-500" />
-                      Seller Dashboard
+                      {t('nav.seller_dashboard')}
                     </Link>
                   )}
 
@@ -314,7 +423,7 @@ export const Header = () => {
                       }}
                       className="w-full text-left px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50"
                     >
-                      Sign Out
+                      {t('nav.sign_out')}
                     </button>
                   </div>
                 </div>
@@ -334,17 +443,55 @@ export const Header = () => {
 
         {/* Mobile Search Bar (Only visible on small screens) */}
         <form onSubmit={handleSearch} className="mt-2.5 md:hidden">
-          <div className="flex w-full rounded-md shadow-xs overflow-hidden bg-white text-gray-900">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search seeds, fertilizers, tools..."
-              className="flex-1 px-3 py-2 text-xs text-gray-900 outline-none"
-            />
+          <div className="flex w-full rounded-md shadow-xs overflow-hidden bg-white text-gray-900 border-2 border-transparent focus-within:border-agri-accent">
+            <div className="relative flex-1 flex items-center">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={isListening ? t('nav.voice_listening') : t('nav.search_placeholder')}
+                className={`w-full px-3 py-2 text-xs text-gray-900 outline-none transition-colors ${
+                  isListening ? 'bg-red-50/70 placeholder-red-600 font-medium' : 'bg-white'
+                } ${searchQuery ? 'pr-14' : 'pr-8'}`}
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={handleClearSearch}
+                  className="absolute right-7 text-gray-400 hover:text-gray-700 p-0.5"
+                  title={t('common.clear')}
+                  aria-label={t('common.clear')}
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={toggleListening}
+                disabled={!isSupported}
+                className={`absolute right-1 p-1 rounded-full transition-all flex items-center justify-center ${
+                  isListening
+                    ? 'bg-red-500 text-white animate-pulse shadow-xs ring-1 ring-red-300'
+                    : isSupported
+                    ? 'text-gray-500 hover:text-agri-primary'
+                    : 'text-gray-300 cursor-not-allowed'
+                }`}
+                title={
+                  !isSupported
+                    ? t('nav.voice_not_supported')
+                    : isListening
+                    ? t('nav.voice_listening')
+                    : t('nav.voice_search_aria')
+                }
+                aria-label={t('nav.voice_search_aria')}
+              >
+                <Mic className={`w-3.5 h-3.5 ${isListening ? 'animate-bounce' : ''}`} />
+              </button>
+            </div>
             <button
               type="submit"
               className="bg-agri-accent text-white px-3 py-2 flex items-center justify-center"
+              aria-label={t('nav.search_aria')}
             >
               <Search className="w-4 h-4 text-gray-900" />
             </button>
@@ -360,28 +507,28 @@ export const Header = () => {
             className="flex items-center gap-1 font-bold text-agri-primary hover:text-agri-dark"
           >
             <Menu className="w-3.5 h-3.5" />
-            <span>All Products</span>
+            <span>{t('nav.all_products')}</span>
           </Link>
           <Link to="/products?category=seeds" className="hover:text-agri-primary hover:underline">
-            🌱 Seeds
+            {t('nav.cat_seeds')}
           </Link>
           <Link to="/products?category=fertilizers" className="hover:text-agri-primary hover:underline">
-            🧪 Fertilizers
+            {t('nav.cat_fertilizers')}
           </Link>
           <Link to="/products?category=pesticides" className="hover:text-agri-primary hover:underline">
-            🛡️ Pesticides & Bio-Controls
+            {t('nav.cat_pesticides')}
           </Link>
           <Link to="/products?category=tools" className="hover:text-agri-primary hover:underline">
-            🚜 Tools & Machinery
+            {t('nav.cat_tools')}
           </Link>
           <Link to="/products?category=irrigation" className="hover:text-agri-primary hover:underline">
-            💧 Drip & Irrigation
+            {t('nav.cat_irrigation')}
           </Link>
           <Link to="/products?sort_by=discount" className="text-agri-hot font-bold hover:underline flex items-center gap-0.5">
-            🔥 Deals of the Day
+            {t('nav.deals_of_day')}
           </Link>
           <Link to="/bargains" className="text-amber-700 font-bold hover:underline flex items-center gap-0.5">
-            💬 Bargain Corner
+            {t('nav.bargain_corner')}
           </Link>
         </div>
       </div>

@@ -6,6 +6,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
 import HeroCarousel from '../components/home/HeroCarousel';
 import CategoryTiles from '../components/home/CategoryTiles';
@@ -17,6 +18,7 @@ import BargainModal from '../components/bargain/BargainModal';
 import { useProducts } from '../hooks/useProducts';
 
 export const Home = () => {
+  const { t } = useTranslation();
   const { products, loading } = useProducts();
   const [bargainProduct, setBargainProduct] = useState(null);
 
@@ -71,14 +73,14 @@ export const Home = () => {
           <div>
             <h3 className="text-base sm:text-lg font-bold text-gray-900 flex items-center gap-1.5">
               <Sparkles className="w-5 h-5 text-agri-accent" />
-              <span>Shop by Crop Specialization</span>
+              <span>{t('home.crop_bundles_title')}</span>
             </h3>
             <p className="text-xs text-gray-500">
-              Complete sowing-to-harvest input bundles tailored for Indian crops
+              {t('home.crop_bundles_sub')}
             </p>
           </div>
           <Link to="/products" className="text-xs font-bold text-agri-primary hover:underline flex items-center gap-1">
-            <span>Explore All</span>
+            <span>{t('common.explore_all')}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -109,7 +111,7 @@ export const Home = () => {
                   <p className="text-[11px] text-gray-500 mt-1">{b.desc}</p>
                 </div>
                 <span className="text-[11px] font-bold text-agri-primary mt-2 flex items-center gap-0.5">
-                  Shop Inputs →
+                  {t('home.shop_inputs')}
                 </span>
               </div>
             </Link>
@@ -125,14 +127,14 @@ export const Home = () => {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="text-base sm:text-lg font-bold text-gray-900">
-              Trending Agricultural Supplies
+              {t('home.trending_title')}
             </h3>
             <p className="text-xs text-gray-500">
-              Top selling certified seeds, organic fertilizers, and farm equipment
+              {t('home.trending_sub')}
             </p>
           </div>
           <Link to="/products" className="text-xs font-bold text-agri-primary hover:underline">
-            View All ({products.length}) →
+            {t('home.view_all_count', { count: products.length })}
           </Link>
         </div>
 

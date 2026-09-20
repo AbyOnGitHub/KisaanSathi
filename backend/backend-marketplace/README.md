@@ -201,7 +201,45 @@ When making requests to protected endpoints:
 | `GET` | `/api/sellers/` | Public | List all verified sellers |
 | `GET` | `/api/sellers/{seller_id}` | Public | Get seller profile with active products |
 
+### 8. Payments (`/api/payments`)
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `POST` | `/api/payments/create-order` | Farmer | Create Razorpay order & pending DB order from active cart |
+| `POST` | `/api/payments/verify` | Farmer | Verify HMAC-SHA256 signature, mark order as paid, clear cart & decrement stock |
+| `GET` | `/api/payments/{order_id}/status` | User / Seller | Poll order payment and fulfillment status |
+
 ---
+
+## Razorpay Payment Integration (Test Mode)
+
+### Environment Configuration
+1. **Backend (`backend/backend-marketplace/.env`)**:
+   ```env
+   PAYMENT_MODE=testing
+   RAZORPAY_KEY_ID=rzp_test_your_key_id
+   RAZORPAY_KEY_SECRET=your_razorpay_secret
+   ```
+2. **Frontend (`frontend/frontend-marketplace/.env`)**:
+   ```env
+   VITE_RAZORPAY_KEY_ID=rzp_test_your_key_id
+   ```
+
+### Test Mode Payment Credentials (Fake Money Sandbox)
+- **Test Card Number**: `4111 1111 1111 1111`
+- **Expiry Date**: Any valid future month/year (e.g., `12/28`)
+- **CVV**: Any 3 digits (e.g., `123`)
+- **OTP**: Any test OTP or click **Success** in Razorpay test modal
+- **UPI**: Test VPA handles simulated approval via Razorpay test interface
+
+### Checkout & Payment Architecture
+1. **Cart to Order**:
+   - `POST /api/payments/create-order` calculates total using negotiated bargained prices or standard discounts.
+   - Inserts order as `status='pending'` and `payment_status='pending'`.
+   - Generates Razorpay Order ID and returns amount in paise (`1 INR = 100 paise`).
+   - Cart items remain in DB until payment verification succeeds.
+2. **Signature Verification**:
+   - `POST /api/payments/verify` validates HMAC-SHA256 signature with Razorpay SDK client utility.
+   - On success: marks `payment_status='paid'`, `status='confirmed'`, empties user cart, and reduces inventory stock.
 
 ## Response Formats
 

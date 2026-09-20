@@ -5,11 +5,13 @@
 
 import React from 'react';
 import { useLocation, Link, useParams } from 'react-router-dom';
-import { CheckCircle2, Package, Truck, ArrowRight, Home } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { CheckCircle2, Package, Truck, Home } from 'lucide-react';
 import Button from '../components/common/Button';
 import { formatPrice, getEstimatedDeliveryDate } from '../utils/formatters';
 
 export const OrderSuccess = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
   const location = useLocation();
   const order = location.state?.order || {
@@ -31,38 +33,50 @@ export const OrderSuccess = () => {
 
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
-            Order Placed Successfully!
+            {t('orders.success_title')}
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Thank you for ordering with AgriMart. Your order has been registered and notified to the seller.
+            {t('orders.success_sub')}
           </p>
         </div>
 
         {/* Order Details Card */}
         <div className="bg-gray-50 rounded-xl border border-gray-200 p-5 text-left text-xs max-w-md mx-auto space-y-3">
           <div className="flex justify-between pb-2 border-b border-gray-200">
-            <span className="text-gray-500">Order Reference</span>
+            <span className="text-gray-500">{t('orders.order_id')}</span>
             <span className="font-mono font-bold text-gray-900">#{order.id.slice(0, 10)}</span>
           </div>
 
           <div className="flex justify-between pb-2 border-b border-gray-200">
-            <span className="text-gray-500">Total Amount</span>
+            <span className="text-gray-500">{t('orders.total_amount')}</span>
             <span className="font-extrabold text-agri-primary text-sm">
               {formatPrice(order.total_amount)}
             </span>
           </div>
 
           <div className="flex justify-between pb-2 border-b border-gray-200">
-            <span className="text-gray-500">Payment Status</span>
-            <span className="font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded text-[11px] uppercase">
-              {order.payment_status || 'Pending'}
+            <span className="text-gray-500">{t('orders.payment_status_label') || 'Payment Status:'}</span>
+            <span
+              className={`font-bold px-2 py-0.5 rounded text-[11px] uppercase ${
+                order.payment_status === 'paid'
+                  ? 'bg-green-100 text-green-800'
+                  : order.payment_status === 'failed'
+                  ? 'bg-red-100 text-red-800'
+                  : 'bg-amber-100 text-amber-800'
+              }`}
+            >
+              {order.payment_status === 'paid'
+                ? t('orders.payment_paid')
+                : order.payment_status === 'failed'
+                ? t('orders.payment_failed')
+                : t('orders.payment_pending')}
             </span>
           </div>
 
           <div className="flex items-center gap-2 pt-1 text-gray-700">
             <Truck className="w-4 h-4 text-agri-primary flex-shrink-0" />
             <span>
-              Expected Doorstep Delivery: <strong>{deliveryDate}</strong>
+              {t('common.free_delivery_by', { date: deliveryDate })}
             </span>
           </div>
         </div>
@@ -71,13 +85,13 @@ export const OrderSuccess = () => {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
           <Link to="/orders">
             <Button variant="primary" size="md" leftIcon={<Package className="w-4 h-4" />}>
-              View Your Orders & Track
+              {t('orders.view_all_orders_btn')}
             </Button>
           </Link>
 
           <Link to="/products">
             <Button variant="secondary" size="md" leftIcon={<Home className="w-4 h-4" />}>
-              Continue Shopping
+              {t('orders.continue_shopping_btn')}
             </Button>
           </Link>
         </div>
