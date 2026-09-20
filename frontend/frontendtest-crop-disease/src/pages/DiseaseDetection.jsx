@@ -153,7 +153,7 @@ export default function DiseaseDetection() {
             <h2 className="text-2xl font-bold">
               {result.disease === 'healthy' 
                 ? 'Healthy Crop' 
-                : result.treatment_data.disease_name.replace(/___/g, ' - ').replace(/_/g, ' ')}
+                : (result.disease || '').replace(/___/g, ' - ').replace(/_/g, ' ')}
             </h2>
             <p className="text-green-100 mt-1 font-medium">Confidence: {(result.confidence * 100).toFixed(1)}%</p>
           </div>
@@ -161,12 +161,12 @@ export default function DiseaseDetection() {
           <div className="p-6 space-y-6">
             <div>
               <h3 className="font-bold text-gray-900 text-lg mb-2">Description</h3>
-              <p className="text-gray-700 leading-relaxed">{result.treatment_data.description}</p>
+              <p className="text-gray-700 leading-relaxed">{result.treatment_data.description || 'No description available.'}</p>
             </div>
             
             <div>
               <h3 className="font-bold text-gray-900 text-lg mb-2">Symptoms to verify</h3>
-              <p className="text-gray-700 leading-relaxed">{result.treatment_data.symptoms}</p>
+              <p className="text-gray-700 leading-relaxed">{result.treatment_data.symptoms || 'No symptoms listed.'}</p>
             </div>
 
             {result.disease !== 'healthy' && (
@@ -175,14 +175,14 @@ export default function DiseaseDetection() {
                   <h4 className="font-bold text-emerald-800 flex items-center gap-2 mb-2">
                     <Leaf className="w-5 h-5" /> Organic Treatment
                   </h4>
-                  <p className="text-emerald-900 text-sm leading-relaxed">{result.treatment_data.organic_treatment}</p>
+                  <p className="text-emerald-900 text-sm leading-relaxed">{result.treatment_data.organic_treatment || 'No organic treatment specified.'}</p>
                 </div>
                 
                 <div className="bg-orange-50 rounded-xl p-5 border border-orange-100">
                   <h4 className="font-bold text-orange-800 flex items-center gap-2 mb-2">
                     <ShieldAlert className="w-5 h-5" /> Chemical Treatment
                   </h4>
-                  <p className="text-orange-900 text-sm leading-relaxed">{result.treatment_data.chemical_treatment}</p>
+                  <p className="text-orange-900 text-sm leading-relaxed">{result.treatment_data.chemical_treatment || 'No chemical treatment specified.'}</p>
                 </div>
               </div>
             )}
