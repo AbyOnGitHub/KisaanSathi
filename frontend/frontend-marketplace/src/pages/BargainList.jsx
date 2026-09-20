@@ -4,6 +4,7 @@
  */
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MessageSquareQuote, Sparkles } from 'lucide-react';
 import Breadcrumbs from '../components/layout/Breadcrumbs';
 import BargainCard from '../components/bargain/BargainCard';
@@ -11,7 +12,8 @@ import EmptyState from '../components/common/EmptyState';
 import { useBargainSessions } from '../hooks/useBargainSessions';
 
 export const BargainList = () => {
-  const { sessions, loading } = useBargainSessions();
+  const { t } = useTranslation();
+  const { sessions } = useBargainSessions();
   const [activeTab, setActiveTab] = useState('all'); // 'all', 'active', 'accepted', 'closed'
 
   const activeSessions = sessions.filter((s) => s.status === 'open');
@@ -28,8 +30,8 @@ export const BargainList = () => {
   const displayed = getFilteredSessions();
 
   const breadcrumbs = [
-    { label: 'Marketplace', href: '/products' },
-    { label: 'Bargain Negotiations' },
+    { label: t('footer.marketplace_catalog'), href: '/products' },
+    { label: t('nav.bargains') },
   ];
 
   return (
@@ -41,13 +43,13 @@ export const BargainList = () => {
         <div>
           <div className="inline-flex items-center gap-1.5 bg-black/20 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full mb-2">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Direct Price Negotiation</span>
+            <span>{t('bargain.direct_price_neg')}</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black tracking-tight">
-            Your Bargain Negotiations & Deals
+            {t('bargain.hub_title')}
           </h1>
           <p className="text-xs text-amber-100 mt-1">
-            Negotiate fair prices with verified agricultural sellers before buying in bulk.
+            {t('bargain.hub_sub')}
           </p>
         </div>
       </div>
@@ -56,21 +58,21 @@ export const BargainList = () => {
       <div className="bg-white rounded-lg border border-agri-border p-4">
         <div className="flex items-center gap-2 text-xs font-bold overflow-x-auto no-scrollbar">
           {[
-            { id: 'all', label: `All (${sessions.length})` },
-            { id: 'active', label: `Active (${activeSessions.length})` },
-            { id: 'accepted', label: `Accepted Deals (${acceptedSessions.length})` },
-            { id: 'closed', label: `Closed (${closedSessions.length})` },
-          ].map((t) => (
+            { id: 'all', label: t('bargain.tab_all', { count: sessions.length }) },
+            { id: 'active', label: t('bargain.tab_active', { count: activeSessions.length }) },
+            { id: 'accepted', label: t('bargain.tab_accepted', { count: acceptedSessions.length }) },
+            { id: 'closed', label: t('bargain.tab_closed', { count: closedSessions.length }) },
+          ].map((item) => (
             <button
-              key={t.id}
-              onClick={() => setActiveTab(t.id)}
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
               className={`px-3 py-1.5 rounded-full transition whitespace-nowrap ${
-                activeTab === t.id
+                activeTab === item.id
                   ? 'bg-agri-accent text-gray-900 font-extrabold shadow-2xs'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              {t.label}
+              {item.label}
             </button>
           ))}
         </div>
@@ -80,9 +82,9 @@ export const BargainList = () => {
       {displayed.length === 0 ? (
         <EmptyState
           icon={<MessageSquareQuote className="w-12 h-12 text-gray-400" />}
-          title="No negotiation sessions found"
-          description="You can start bargaining on any product marked with the '💬 Bargain' badge on the catalog page."
-          actionText="Browse Bargainable Products"
+          title={t('bargain.no_sessions_title')}
+          description={t('bargain.no_sessions_desc')}
+          actionText={t('bargain.browse_bargain_btn')}
           onAction={() => window.location.assign('/products?bargain_only=true')}
         />
       ) : (

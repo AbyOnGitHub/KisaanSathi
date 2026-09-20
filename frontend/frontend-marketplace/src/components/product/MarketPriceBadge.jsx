@@ -4,11 +4,13 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, CheckCircle2, Info } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { TrendingUp, TrendingDown, CheckCircle2 } from 'lucide-react';
 import api from '../../utils/api';
 import { formatPrice } from '../../utils/formatters';
 
 export const MarketPriceBadge = ({ productId, fallbackProduct = null }) => {
+  const { t } = useTranslation();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -90,7 +92,7 @@ export const MarketPriceBadge = ({ productId, fallbackProduct = null }) => {
       <div className="flex-1">
         <div className="flex items-center justify-between font-bold">
           <span>
-            📊 APMC Mandi Benchmark ({data.commodity || 'Market Rate'}): {formatPrice(data.market_modal_price)}
+            📊 {t('product.mandi_rate_badge')} ({data.commodity || 'Mandi'}): {formatPrice(data.market_modal_price)}
           </span>
           <span
             className={`px-1.5 py-0.2 rounded text-[10px] uppercase font-extrabold ${
@@ -106,7 +108,7 @@ export const MarketPriceBadge = ({ productId, fallbackProduct = null }) => {
         </div>
 
         <p className="text-[11px] mt-0.5 text-gray-700">
-          {data.message} {isHigh && '💡 You can use the Bargain feature to negotiate a better deal!'}
+          {data.message}
         </p>
       </div>
     </div>

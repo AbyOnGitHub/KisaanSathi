@@ -42,9 +42,13 @@ async def list_products(
     Returns a paginated list of active marketplace products matching the applied filters,
     including embedded seller and category metadata.
     """
+    clean_search = search.strip() if search else None
+    if clean_search == "":
+        clean_search = None
+
     result = SupabaseService.fetch_products(
         category_slug=category,
-        search=search,
+        search=clean_search,
         min_price=min_price,
         max_price=max_price,
         sort_by=sort_by,

@@ -5,12 +5,14 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MessageSquareQuote, CheckCircle2 } from 'lucide-react';
 import SellerBargainCard from '../../components/seller/SellerBargainCard';
 import EmptyState from '../../components/common/EmptyState';
 import api from '../../utils/api';
 
 export const SellerBargains = () => {
+  const { t } = useTranslation();
   const [pendingSessions, setPendingSessions] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -41,10 +43,10 @@ export const SellerBargains = () => {
         <div>
           <h2 className="text-base font-black text-gray-900 flex items-center gap-1.5">
             <MessageSquareQuote className="w-5 h-5 text-amber-600" />
-            <span>Buyer Bargain Requests ({pendingSessions.length})</span>
+            <span>{t('seller.buyer_bargains_title', { count: pendingSessions.length })}</span>
           </h2>
           <p className="text-xs text-gray-500">
-            Incoming customer price proposals awaiting your approval or counter-offer
+            {t('seller.buyer_bargains_sub')}
           </p>
         </div>
       </div>
@@ -52,13 +54,13 @@ export const SellerBargains = () => {
       {loading ? (
         <div className="text-center py-12 text-gray-500">
           <div className="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-          <span>Checking for incoming price negotiations...</span>
+          <span>{t('seller.loading_bargains')}</span>
         </div>
       ) : pendingSessions.length === 0 ? (
         <EmptyState
           icon={<CheckCircle2 className="w-12 h-12 text-agri-primary" />}
-          title="All caught up!"
-          description="You have responded to all incoming price negotiations."
+          title={t('seller.all_caught_up_title')}
+          description={t('seller.all_caught_up_desc')}
         />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -76,3 +78,4 @@ export const SellerBargains = () => {
 };
 
 export default SellerBargains;
+

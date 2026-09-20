@@ -5,6 +5,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { Plus, Edit3, Trash2, Search, Layers, AlertCircle } from 'lucide-react';
 import Button from '../../components/common/Button';
@@ -15,6 +16,7 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../utils/api';
 
 export const SellerProducts = ({ onOpenAddModal, onProductsChanged }) => {
+  const { t } = useTranslation();
   const { profile } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [editingProduct, setEditingProduct] = useState(null);
@@ -46,7 +48,7 @@ export const SellerProducts = ({ onOpenAddModal, onProductsChanged }) => {
   }, [profile]);
 
   const handleDeleteProduct = async (prodId) => {
-    if (!window.confirm('Are you sure you want to deactivate and remove this product listing?')) return;
+    if (!window.confirm(t('seller.confirm_delete'))) return;
     try {
       await api.delete(`/products/${prodId}`);
       toast.success('Product listing removed');
@@ -84,10 +86,10 @@ export const SellerProducts = ({ onOpenAddModal, onProductsChanged }) => {
         <div>
           <h2 className="text-base font-black text-gray-900 flex items-center gap-1.5">
             <Layers className="w-5 h-5 text-agri-primary" />
-            <span>Product Inventory ({sellerProducts.length} Items)</span>
+            <span>{t('seller.inventory_title', { count: sellerProducts.length })}</span>
           </h2>
           <p className="text-xs text-gray-500">
-            Manage your store catalog, pricing, available stock, and bargaining permissions
+            {t('seller.inventory_sub')}
           </p>
         </div>
 
@@ -97,7 +99,7 @@ export const SellerProducts = ({ onOpenAddModal, onProductsChanged }) => {
             <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-gray-400" />
             <input
               type="text"
-              placeholder="Search products..."
+              placeholder={t('seller.search_products')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-8 pr-3 py-1.5 border border-gray-300 rounded-md text-xs outline-none focus:border-agri-primary bg-gray-50"
@@ -110,7 +112,7 @@ export const SellerProducts = ({ onOpenAddModal, onProductsChanged }) => {
             onClick={onOpenAddModal}
             leftIcon={<Plus className="w-4 h-4" />}
           >
-            Add Product
+            {t('seller.add_new_product')}
           </Button>
         </div>
       </div>
@@ -118,14 +120,14 @@ export const SellerProducts = ({ onOpenAddModal, onProductsChanged }) => {
       {loading ? (
         <div className="text-center py-12 text-gray-500">
           <div className="w-8 h-8 border-4 border-agri-primary border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-          <span>Loading your product catalog...</span>
+          <span>{t('seller.loading_catalog')}</span>
         </div>
       ) : sellerProducts.length === 0 ? (
         <EmptyState
           icon={<Layers className="w-12 h-12 text-gray-400" />}
-          title="No products listed yet"
-          description="You have not published any products in your catalog. Click the button below to add your first agro-supply item."
-          actionText="Add New Product"
+          title={t('seller.no_products_title')}
+          description={t('seller.no_products_desc')}
+          actionText={t('seller.add_new_product')}
           onAction={onOpenAddModal}
         />
       ) : (
@@ -134,13 +136,13 @@ export const SellerProducts = ({ onOpenAddModal, onProductsChanged }) => {
           <table className="w-full text-left divide-y divide-gray-200">
             <thead className="bg-gray-50 text-[11px] font-bold text-gray-500 uppercase tracking-wider">
               <tr>
-                <th className="py-3 px-4">Product Info</th>
-                <th className="py-3 px-4">Category</th>
-                <th className="py-3 px-4">Price</th>
-                <th className="py-3 px-4">Stock</th>
-                <th className="py-3 px-4">Bargain</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+                <th className="py-3 px-4">{t('seller.col_product_info')}</th>
+                <th className="py-3 px-4">{t('seller.col_category')}</th>
+                <th className="py-3 px-4">{t('seller.col_price')}</th>
+                <th className="py-3 px-4">{t('seller.col_stock')}</th>
+                <th className="py-3 px-4">{t('seller.col_bargain')}</th>
+                <th className="py-3 px-4">{t('seller.col_status')}</th>
+                <th className="py-3 px-4 text-right">{t('seller.col_actions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white">
@@ -171,7 +173,7 @@ export const SellerProducts = ({ onOpenAddModal, onProductsChanged }) => {
                     {formatPrice(prod.price)}
                     {prod.discount_percent > 0 && (
                       <span className="text-[10px] text-red-600 font-bold ml-1">
-                        ({prod.discount_percent}% off)
+                        ({t('common.off', { discount: prod.discount_percent })})
                       </span>
                     )}
                   </td>
@@ -187,10 +189,10 @@ export const SellerProducts = ({ onOpenAddModal, onProductsChanged }) => {
                   <td className="py-3 px-4">
                     {prod.allow_bargaining ? (
                       <span className="bg-amber-100 text-amber-900 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                        💬 Enabled
+                        {t('seller.bargain_enabled')}
                       </span>
                     ) : (
-                      <span className="text-gray-400 text-[11px]">Disabled</span>
+                      <span className="text-gray-400 text-[11px]">{t('seller.bargain_disabled')}</span>
                     )}
                   </td>
 
@@ -204,7 +206,7 @@ export const SellerProducts = ({ onOpenAddModal, onProductsChanged }) => {
                           : 'bg-gray-100 text-gray-500'
                       }`}
                     >
-                      {prod.is_active ? 'Active' : 'Inactive'}
+                      {prod.is_active ? t('seller.status_active') : t('seller.status_inactive')}
                     </button>
                   </td>
 
@@ -214,14 +216,14 @@ export const SellerProducts = ({ onOpenAddModal, onProductsChanged }) => {
                       <button
                         onClick={() => setEditingProduct(prod)}
                         className="p-1.5 text-gray-500 hover:text-agri-primary hover:bg-gray-100 rounded transition"
-                        title="Edit Product"
+                        title={t('seller.edit_product')}
                       >
                         <Edit3 className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteProduct(prod.id)}
                         className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded transition"
-                        title="Delete Product"
+                        title={t('seller.delete_product')}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -251,3 +253,4 @@ export const SellerProducts = ({ onOpenAddModal, onProductsChanged }) => {
 };
 
 export default SellerProducts;
+

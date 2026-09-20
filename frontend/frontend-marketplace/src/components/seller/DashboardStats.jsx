@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Package, MessageSquareQuote, Layers, TrendingUp, IndianRupee } from 'lucide-react';
 import { formatPrice } from '../../utils/formatters';
 
@@ -12,33 +13,35 @@ export const DashboardStats = ({
   activeProducts = 28,
   revenueThisMonth = 45800,
 }) => {
+  const { t } = useTranslation();
+
   const stats = [
     {
-      title: 'Total Orders',
+      title: t('seller.stat_total_orders'),
       value: totalOrders,
-      change: '+14% vs last month',
+      change: t('seller.stat_vs_last_month'),
       icon: <Package className="w-6 h-6 text-blue-600" />,
       bg: 'bg-blue-50 border-blue-200',
     },
     {
-      title: 'Pending Bargains',
+      title: t('seller.stat_pending_bargains'),
       value: pendingBargains,
-      change: 'Requires your counter-offer',
-      badge: pendingBargains > 0 ? 'Action Needed' : null,
+      change: t('seller.stat_requires_counter'),
+      badge: pendingBargains > 0 ? t('seller.stat_action_needed') : null,
       icon: <MessageSquareQuote className="w-6 h-6 text-amber-600" />,
       bg: 'bg-amber-50 border-amber-200',
     },
     {
-      title: 'Active Product Listings',
+      title: t('seller.stat_active_products'),
       value: activeProducts,
-      change: '4 categories active',
+      change: t('seller.stat_categories_active'),
       icon: <Layers className="w-6 h-6 text-green-600" />,
       bg: 'bg-green-50 border-green-200',
     },
     {
-      title: 'Revenue This Month',
+      title: t('seller.stat_revenue'),
       value: formatPrice(revenueThisMonth),
-      change: '+22% growth',
+      change: t('seller.stat_growth'),
       icon: <TrendingUp className="w-6 h-6 text-purple-600" />,
       bg: 'bg-purple-50 border-purple-200',
     },
@@ -76,3 +79,4 @@ export const DashboardStats = ({
 };
 
 export default DashboardStats;
+

@@ -3,12 +3,14 @@
  */
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { Eye, Clock } from 'lucide-react';
 import { formatPrice, formatDate } from '../../utils/formatters';
 import api from '../../utils/api';
 
 export const SellerOrderRow = ({ order, onStatusUpdated, onViewDetails }) => {
+  const { t } = useTranslation();
   const [currentStatus, setCurrentStatus] = useState(order.status || 'pending');
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -48,18 +50,37 @@ export const SellerOrderRow = ({ order, onStatusUpdated, onViewDetails }) => {
 
       {/* Shipping City & Pincode */}
       <td className="py-3 px-4 text-gray-800">
-        <span className="font-semibold block">{order.shipping_city || 'Farm Location'}</span>
+        <span className="font-semibold block">{order.shipping_city || t('seller.farm_location')}</span>
         <span className="text-[11px] text-gray-400">{order.shipping_pincode || '440001'}</span>
       </td>
 
       {/* Items Count */}
       <td className="py-3 px-4 font-bold text-gray-900">
-        {order.items?.length || 1} Item(s)
+        {t('seller.items_count', { count: order.items?.length || 1 })}
       </td>
 
       {/* Total Amount */}
       <td className="py-3 px-4 font-extrabold text-gray-900">
         {formatPrice(order.total_amount)}
+      </td>
+
+      {/* Payment Status Badge */}
+      <td className="py-3 px-4">
+        <span
+          className={`inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider ${
+            order.payment_status === 'paid'
+              ? 'bg-green-100 text-green-800 border-green-300'
+              : order.payment_status === 'failed'
+              ? 'bg-red-100 text-red-800 border-red-300'
+              : 'bg-amber-100 text-amber-800 border-amber-300'
+          }`}
+        >
+          {order.payment_status === 'paid'
+            ? t('orders.payment_paid') || 'Paid'
+            : order.payment_status === 'failed'
+            ? t('orders.payment_failed') || 'Failed'
+            : t('orders.payment_pending') || 'Pending'}
+        </span>
       </td>
 
       {/* Fulfillment Status Dropdown */}
@@ -72,11 +93,11 @@ export const SellerOrderRow = ({ order, onStatusUpdated, onViewDetails }) => {
             statusColors[currentStatus] || statusColors.pending
           }`}
         >
-          <option value="pending">Pending</option>
-          <option value="confirmed">Confirmed</option>
-          <option value="shipped">Shipped</option>
-          <option value="delivered">Delivered</option>
-          <option value="cancelled">Cancelled</option>
+          <option value="pending">{t('seller.status_pending')}</option>
+          <option value="confirmed">{t('seller.status_confirmed')}</option>
+          <option value="shipped">{t('seller.status_shipped')}</option>
+          <option value="delivered">{t('seller.status_delivered')}</option>
+          <option value="cancelled">{t('seller.status_cancelled')}</option>
         </select>
       </td>
 
@@ -85,7 +106,7 @@ export const SellerOrderRow = ({ order, onStatusUpdated, onViewDetails }) => {
         <button
           onClick={() => onViewDetails(order)}
           className="p-1.5 text-gray-500 hover:text-agri-primary hover:bg-gray-100 rounded-md transition"
-          title="View Order Details"
+          title={t('seller.view_order_details')}
         >
           <Eye className="w-4 h-4" />
         </button>
@@ -95,3 +116,4 @@ export const SellerOrderRow = ({ order, onStatusUpdated, onViewDetails }) => {
 };
 
 export default SellerOrderRow;
+
