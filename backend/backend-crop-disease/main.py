@@ -1,20 +1,29 @@
-<<<<<<<< HEAD:backend/backend-loginsystem/backend_auth/auth.py
-import os
-from fastapi import Depends, HTTPException, status
-========
 from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
->>>>>>>> crop-disease:backend/backend-crop-disease/main.py
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from supabase import create_client, Client
+import os
 from dotenv import load_dotenv
 from ml_service import predict_image
 
+# Load environment variables
 load_dotenv()
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_ANON_KEY")
 
+app = FastAPI(title="KisaanSathi Crop Disease API")
+
+# Configure CORS for the React frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Initialize Supabase client
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY) if SUPABASE_URL and SUPABASE_KEY else None
 
 security = HTTPBearer()
@@ -38,12 +47,10 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=str(e),
         )
-<<<<<<<< HEAD:backend/backend-loginsystem/backend_auth/auth.py
-========
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to KisaanSathi API"}
+    return {"message": "Welcome to KisaanSathi Crop Disease API"}
 
 @app.post("/api/predict-disease")
 async def predict_disease_route(file: UploadFile = File(...)):
@@ -75,4 +82,3 @@ async def predict_disease_route(file: UploadFile = File(...)):
         "confidence": float(confidence),
         "treatment_data": treatment_data
     }
->>>>>>>> crop-disease:backend/backend-crop-disease/main.py
