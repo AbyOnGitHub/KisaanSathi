@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+supabase>=2.31.0
+pydantic
+pydantic-settings
+python-dotenv
+Pillow
+python-multipart
+numpy
+tensorflow
