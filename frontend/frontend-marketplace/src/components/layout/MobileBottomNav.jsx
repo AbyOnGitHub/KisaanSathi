@@ -4,11 +4,13 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Home, Grid, MessageSquareQuote, ShoppingCart, User } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useBargainSessions } from '../../hooks/useBargainSessions';
 
 export const MobileBottomNav = () => {
+  const { t } = useTranslation();
   const { totalItems } = useCart();
   const { sessions } = useBargainSessions();
   const activeBargains = (sessions || []).filter((s) => s.status === 'open').length;
@@ -22,12 +24,12 @@ export const MobileBottomNav = () => {
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-agri-border shadow-lg flex items-center justify-around">
       <NavLink to="/" className={navItemClass}>
         <Home className="w-5 h-5 mb-0.5" />
-        <span>Home</span>
+        <span>{t('nav.home')}</span>
       </NavLink>
 
       <NavLink to="/products" className={navItemClass}>
         <Grid className="w-5 h-5 mb-0.5" />
-        <span>Categories</span>
+        <span>{t('nav.all_categories')}</span>
       </NavLink>
 
       <NavLink to="/bargains" className={navItemClass}>
@@ -39,7 +41,7 @@ export const MobileBottomNav = () => {
             </span>
           )}
         </div>
-        <span>Bargains</span>
+        <span>{t('nav.bargains')}</span>
       </NavLink>
 
       <NavLink to="/cart" className={navItemClass}>
@@ -51,12 +53,12 @@ export const MobileBottomNav = () => {
             </span>
           )}
         </div>
-        <span>Cart</span>
+        <span>{t('nav.cart')}</span>
       </NavLink>
 
       <NavLink to="/orders" className={navItemClass}>
         <User className="w-5 h-5 mb-0.5" />
-        <span>Account</span>
+        <span>{t('nav.account')}</span>
       </NavLink>
     </nav>
   );

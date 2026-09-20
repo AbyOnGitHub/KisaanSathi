@@ -5,10 +5,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { CheckCircle2, Star, Store, ShieldCheck } from 'lucide-react';
 import api from '../../utils/api';
 
 export const TopSellers = () => {
+  const { t } = useTranslation();
   const [sellers, setSellers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -42,14 +44,14 @@ export const TopSellers = () => {
         <div>
           <h3 className="text-base sm:text-lg font-bold text-gray-900 flex items-center gap-1.5">
             <ShieldCheck className="w-5 h-5 text-agri-primary" />
-            <span>Top Rated & Verified Sellers</span>
+            <span>{t('home.top_sellers_title')}</span>
           </h3>
           <p className="text-xs text-gray-500">
-            Government licensed agri-input distributors with verified GSTIN
+            {t('home.top_sellers_sub')}
           </p>
         </div>
         <Link to="/products" className="text-xs font-bold text-agri-primary hover:underline">
-          View All Stores →
+          {t('home.view_all_stores')}
         </Link>
       </div>
 
@@ -74,7 +76,7 @@ export const TopSellers = () => {
                     <CheckCircle2 className="w-3.5 h-3.5 text-agri-primary flex-shrink-0" />
                   </div>
                   <span className="text-[10px] bg-green-100 text-green-800 font-bold px-1.5 py-0.2 rounded inline-block mt-0.5">
-                    Verified Seller
+                    {t('common.verified')}
                   </span>
                 </div>
               </div>
@@ -83,7 +85,7 @@ export const TopSellers = () => {
                 <div className="flex items-center justify-between text-[11px] pt-1">
                   <span className="flex items-center gap-1 font-bold text-gray-800">
                     <Star className="w-3.5 h-3.5 text-agri-star fill-current" />
-                    <span>4.8 (Verified)</span>
+                    <span>4.8 ({t('common.verified')})</span>
                   </span>
                   <span className="text-gray-500 font-medium">Licensed Dealer</span>
                 </div>
@@ -95,7 +97,7 @@ export const TopSellers = () => {
               className="w-full bg-gray-50 hover:bg-green-50 text-agri-primary border border-gray-200 hover:border-green-300 font-bold py-1.5 rounded text-xs flex items-center justify-center gap-1 transition"
             >
               <Store className="w-3.5 h-3.5" />
-              <span>Visit Store</span>
+              <span>{t('home.visit_store')}</span>
             </Link>
           </div>
         ))}

@@ -4,10 +4,12 @@
 
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { ShieldCheck, Award, MessageSquareQuote, Truck, Mail, Check } from 'lucide-react';
 import Button from '../common/Button';
 
 export const TrustBadges = () => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -15,7 +17,7 @@ export const TrustBadges = () => {
     e.preventDefault();
     if (email) {
       setSubscribed(true);
-      toast.success('Thank you for subscribing to Kisaan Weather & Mandi alerts!');
+      toast.success(t('home.newsletter_title'));
       setEmail('');
     }
   };
@@ -23,23 +25,23 @@ export const TrustBadges = () => {
   const badges = [
     {
       icon: <ShieldCheck className="w-8 h-8 text-agri-primary" />,
-      title: 'Verified Agri Dealers',
-      desc: '100% verified licenses, GSTIN, and dealer credentials.',
+      title: t('home.trust_1_title'),
+      desc: t('home.trust_1_desc'),
     },
     {
       icon: <Award className="w-8 h-8 text-amber-500" />,
-      title: 'Genuine Quality Guarantee',
-      desc: 'Direct from brand manufacturers like IFFCO, Mahyco, Bayer & Syngenta.',
+      title: t('home.trust_2_title'),
+      desc: t('home.trust_2_desc'),
     },
     {
       icon: <MessageSquareQuote className="w-8 h-8 text-blue-600" />,
-      title: 'Direct Price Bargaining',
-      desc: 'Negotiate bulk prices directly with sellers before placing orders.',
+      title: t('home.trust_3_title'),
+      desc: t('home.trust_3_desc'),
     },
     {
       icon: <Truck className="w-8 h-8 text-purple-600" />,
-      title: 'Direct Farm Delivery',
-      desc: 'Fast delivery straight to your village or farm location.',
+      title: t('home.trust_4_title'),
+      desc: t('home.trust_4_desc'),
     },
   ];
 
@@ -69,10 +71,10 @@ export const TrustBadges = () => {
             <span>Kisaan Weekly Bulletin</span>
           </div>
           <h3 className="text-xl sm:text-2xl font-black tracking-tight">
-            Stay Updated with Mandi Rates & Seasonal Deals
+            {t('home.newsletter_title')}
           </h3>
           <p className="text-xs text-green-100 mt-1">
-            Get weekly APMC commodity price alerts and discounts on certified seeds.
+            {t('home.newsletter_sub')}
           </p>
         </div>
 
@@ -85,15 +87,15 @@ export const TrustBadges = () => {
           ) : (
             <>
               <input
-                type="email"
+                type="text"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your phone or email address..."
+                placeholder={t('home.newsletter_placeholder')}
                 className="px-4 py-2.5 rounded-lg text-xs text-gray-900 outline-none w-full sm:w-72 bg-white font-medium"
               />
               <Button type="submit" variant="accent" size="md">
-                Subscribe Free
+                {t('home.newsletter_btn')}
               </Button>
             </>
           )}

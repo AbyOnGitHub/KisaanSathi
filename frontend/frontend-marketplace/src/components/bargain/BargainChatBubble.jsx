@@ -3,10 +3,12 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { User, Store, Tag } from 'lucide-react';
 import { formatPrice, timeAgo } from '../../utils/formatters';
 
 export const BargainChatBubble = ({ offer, isCurrentUser = false }) => {
+  const { t } = useTranslation();
   const isFarmer = offer.offered_by === 'farmer';
 
   return (
@@ -19,7 +21,7 @@ export const BargainChatBubble = ({ offer, isCurrentUser = false }) => {
           <Store className="w-3 h-3 text-amber-600" />
         )}
         <span className="font-bold">
-          {isFarmer ? 'Farmer Offer' : 'Seller Counter-Offer'}
+          {isFarmer ? t('bargain.farmer_offer') : t('bargain.seller_counter_offer')}
         </span>
         <span>• {timeAgo(offer.created_at)}</span>
       </div>
@@ -38,11 +40,11 @@ export const BargainChatBubble = ({ offer, isCurrentUser = false }) => {
             <Tag className="w-4 h-4" />
           </div>
           <div>
-            <span className="text-[10px] text-gray-500 uppercase font-semibold block">Proposed Price</span>
+            <span className="text-[10px] text-gray-500 uppercase font-semibold block">{t('bargain.proposed_price_label')}</span>
             <span className="text-base font-extrabold text-agri-primary">
               {formatPrice(offer.offered_price)}{' '}
               <span className="text-xs font-normal text-gray-500">
-                (for {offer.quantity || 1} units)
+                {t('bargain.for_units', { count: offer.quantity || 1 })}
               </span>
             </span>
           </div>
@@ -60,3 +62,4 @@ export const BargainChatBubble = ({ offer, isCurrentUser = false }) => {
 };
 
 export default BargainChatBubble;
+

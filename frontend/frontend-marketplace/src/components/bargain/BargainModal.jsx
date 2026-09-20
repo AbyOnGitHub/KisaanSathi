@@ -4,7 +4,8 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { MessageSquareQuote, ShieldAlert, Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
+import { useTranslation, Trans } from 'react-i18next';
+import { MessageSquareQuote, Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
 import Modal from '../common/Modal';
 import Button from '../common/Button';
 import { formatPrice } from '../../utils/formatters';
@@ -16,6 +17,7 @@ export const BargainModal = ({
   product = null,
   onSuccess = null,
 }) => {
+  const { t } = useTranslation();
   if (!product) return null;
 
   const { startBargain } = useBargainSessions();
@@ -60,7 +62,7 @@ export const BargainModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="💬 Direct Price Negotiation"
+      title={t('bargain.modal_title')}
       maxWidth="max-w-md"
     >
       <form onSubmit={handleSubmit} className="space-y-4 text-xs">
@@ -74,7 +76,7 @@ export const BargainModal = ({
           <div className="flex-1 min-w-0">
             <h4 className="font-bold text-gray-900 text-xs truncate">{product.name}</h4>
             <p className="text-[11px] text-gray-500">
-              Listed Price: <strong className="text-gray-900">{formatPrice(originalPrice)}</strong> / {product.unit || 'unit'}
+              {t('common.price')}: <strong className="text-gray-900">{formatPrice(originalPrice)}</strong> / {product.unit || 'unit'}
             </p>
           </div>
         </div>
@@ -82,7 +84,7 @@ export const BargainModal = ({
         {/* Fair Range Slider Bar */}
         <div>
           <div className="flex items-center justify-between font-semibold text-gray-700 mb-1">
-            <span>Fair Negotiation Range</span>
+            <span>{t('bargain.fair_range')}</span>
             <span className="text-agri-primary font-bold">
               {formatPrice(minAllowed)} - {formatPrice(maxAllowed)}
             </span>
@@ -99,8 +101,8 @@ export const BargainModal = ({
           />
 
           <div className="flex justify-between text-[10px] text-gray-400 mt-0.5">
-            <span>Min (50%): {formatPrice(minAllowed)}</span>
-            <span>Listed: {formatPrice(originalPrice)}</span>
+            <span>{t('bargain.min_50', { price: formatPrice(minAllowed) })}</span>
+            <span>{t('bargain.listed', { price: formatPrice(originalPrice) })}</span>
           </div>
         </div>
 
@@ -108,7 +110,7 @@ export const BargainModal = ({
         <div className="grid grid-cols-2 gap-3">
           {/* Offer Price Input */}
           <div>
-            <label className="block font-bold text-gray-800 mb-1">Your Proposed Price (₹)</label>
+            <label className="block font-bold text-gray-800 mb-1">{t('bargain.proposed_price')}</label>
             <div className="relative">
               <span className="absolute left-3 top-2.5 text-gray-500 font-bold">₹</span>
               <input
@@ -126,7 +128,7 @@ export const BargainModal = ({
 
           {/* Quantity Input */}
           <div>
-            <label className="block font-bold text-gray-800 mb-1">Quantity ({product.unit || 'units'})</label>
+            <label className="block font-bold text-gray-800 mb-1">{t('bargain.quantity_units', { unit: product.unit || 'unit' })}</label>
             <input
               type="number"
               min={product.min_order || 1}
@@ -141,44 +143,48 @@ export const BargainModal = ({
         {isTooLow ? (
           <div className="p-2.5 bg-red-50 border border-red-200 rounded-md flex items-center gap-2 text-red-700">
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
-            <span>Minimum allowed offer is {formatPrice(minAllowed)} (50% of listed price).</span>
+            <span>{t('bargain.min_allowed_error', { price: formatPrice(minAllowed) })}</span>
           </div>
         ) : discountFromOrig >= 20 ? (
           <div className="p-2.5 bg-green-50 border border-green-200 rounded-md flex items-center gap-2 text-green-800">
             <Sparkles className="w-4 h-4 text-agri-primary flex-shrink-0" />
-            <span>You are requesting a <strong>{discountFromOrig}% discount</strong>. Adding a note helps seller accept!</span>
+            <span>
+              <Trans i18nKey="bargain.discount_tip" values={{ discount: discountFromOrig }}>
+                You are requesting a <strong>{{discount: discountFromOrig}}% discount</strong>. Adding a note helps seller accept!
+              </Trans>
+            </span>
           </div>
         ) : (
           <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-md flex items-center gap-2 text-amber-800">
             <CheckCircle2 className="w-4 h-4 text-agri-accent flex-shrink-0" />
-            <span>Competitive offer! Seller has a high probability of accepting.</span>
+            <span>{t('bargain.competitive_tip')}</span>
           </div>
         )}
 
         {/* Note / Message Textarea */}
         <div>
           <label className="block font-semibold text-gray-700 mb-1">
-            Note for Seller (Optional)
+            {t('bargain.note_seller')}
           </label>
           <textarea
             rows={2}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="e.g. Need this for 5 acres of cotton. Regular buyer from your store."
+            placeholder={t('bargain.note_placeholder_modal')}
             className="w-full p-2.5 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-green-200 focus:border-agri-primary text-xs resize-none"
           />
         </div>
 
         {/* Rules & Trust Footer */}
         <div className="bg-gray-50 p-2.5 rounded text-[11px] text-gray-500 border border-gray-200 space-y-0.5">
-          <p>• Up to <strong>10 negotiation rounds</strong> with seller.</p>
-          <p>• Accepted deals are locked and can be directly added to your cart.</p>
+          <p><Trans i18nKey="bargain.rule_rounds">• Up to <strong>10 negotiation rounds</strong> with seller.</Trans></p>
+          <p><Trans i18nKey="bargain.rule_locked">• Accepted deals are locked and can be directly added to your cart.</Trans></p>
         </div>
 
         {/* Actions */}
         <div className="flex items-center justify-end gap-2 pt-2">
           <Button variant="secondary" onClick={onClose} disabled={isSubmitting}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button
             type="submit"
@@ -187,7 +193,7 @@ export const BargainModal = ({
             disabled={!isValid}
             leftIcon={<MessageSquareQuote className="w-4 h-4" />}
           >
-            Send Offer for {formatPrice(offeredPrice * quantity)}
+            {t('bargain.send_offer_for', { total: formatPrice(offeredPrice * quantity) })}
           </Button>
         </div>
       </form>

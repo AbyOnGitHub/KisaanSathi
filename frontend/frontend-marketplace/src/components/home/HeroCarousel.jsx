@@ -4,40 +4,43 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
-import { ArrowRight, Sparkles, MessageSquareQuote, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import Button from '../common/Button';
 
 export const HeroCarousel = () => {
+  const { t } = useTranslation();
+
   const slides = [
     {
       id: 1,
-      title: 'Kharif Season Mega Farm Sale!',
-      tag: 'UP TO 35% OFF SEEDS & FERTILIZERS',
-      description: 'Certified hybrid cotton, paddy, and soyabean seeds with guaranteed high germination rates from verified dealers.',
-      buttonText: 'Shop Seed Deals',
+      title: t('home.hero_slide_1_title'),
+      tag: t('home.hero_slide_1_badge'),
+      description: t('home.hero_slide_1_desc'),
+      buttonText: t('home.hero_slide_1_btn'),
       link: '/products?category=seeds',
       bgGradient: 'from-green-950 via-green-900 to-emerald-800',
       image: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1000&auto=format&fit=crop&q=80',
     },
     {
       id: 2,
-      title: 'Direct Farmer Price Bargaining',
-      tag: 'INDIA’S 1ST NEGOTIABLE AGRI MARKETPLACE',
-      description: 'Negotiate bulk prices directly with agricultural suppliers and get custom discounted rates for your farm.',
-      buttonText: 'Start Bargaining',
-      link: '/bargains',
+      title: t('home.hero_slide_2_title'),
+      tag: t('home.hero_slide_2_badge'),
+      description: t('home.hero_slide_2_desc'),
+      buttonText: t('home.hero_slide_2_btn'),
+      link: '/products?category=fertilizers',
       bgGradient: 'from-amber-950 via-yellow-900 to-amber-800',
       image: 'https://images.unsplash.com/photo-1592417817098-8f3d6910985b?w=1000&auto=format&fit=crop&q=80',
     },
     {
       id: 3,
-      title: 'Modern Drip Irrigation & Spray Pumps',
-      tag: 'SAVE UP TO 60% WATER & LABOUR',
-      description: 'ISI-marked lateral pipes, pressure drippers, and battery knapsack sprayers delivered to your doorstep.',
-      buttonText: 'Explore Equipment',
-      link: '/products?category=tools',
+      title: t('home.hero_slide_3_title'),
+      tag: t('home.hero_slide_3_badge'),
+      description: t('home.hero_slide_3_desc'),
+      buttonText: t('home.hero_slide_3_btn'),
+      link: '/bargains',
       bgGradient: 'from-blue-950 via-slate-900 to-teal-900',
       image: 'https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=1000&auto=format&fit=crop&q=80',
     },
@@ -88,7 +91,7 @@ export const HeroCarousel = () => {
                   </Link>
                   <Link to="/products">
                     <Button variant="ghost" size="md" className="text-white hover:bg-white/10">
-                      View All Catalog
+                      {t('common.view_all')}
                     </Button>
                   </Link>
                 </div>

@@ -3,11 +3,13 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { CheckCircle2, Star, MapPin, Store, MessageSquare, Award } from 'lucide-react';
 import Button from '../common/Button';
 
 export const SellerCard = ({ seller = null, onContactSeller = null }) => {
-  const sellerName = seller?.business_name || seller?.full_name || 'Kisan Agro Supplies Mandi';
+  const { t } = useTranslation();
+  const sellerName = seller?.business_name || seller?.full_name || t('product.seller_verified_badge');
   const avatar =
     seller?.avatar_url ||
     'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&auto=format&fit=crop&q=80';
@@ -24,7 +26,7 @@ export const SellerCard = ({ seller = null, onContactSeller = null }) => {
           <div className="flex items-center gap-1">
             <span className="font-bold text-gray-900 text-sm truncate">{sellerName}</span>
             {seller?.is_verified && (
-              <CheckCircle2 className="w-4 h-4 text-agri-primary flex-shrink-0" title="Verified Seller" />
+              <CheckCircle2 className="w-4 h-4 text-agri-primary flex-shrink-0" title={t('common.verified')} />
             )}
           </div>
           <p className="text-gray-500 text-[11px] flex items-center gap-1 mt-0.5">
@@ -37,7 +39,7 @@ export const SellerCard = ({ seller = null, onContactSeller = null }) => {
       {/* Trust & Ratings Badges */}
       <div className="grid grid-cols-2 gap-2 bg-gray-50 p-2.5 rounded-md border border-gray-100 text-[11px]">
         <div>
-          <span className="text-gray-500 block">Seller Rating</span>
+          <span className="text-gray-500 block">{t('common.rating')}</span>
           <span className="font-extrabold text-gray-900 flex items-center gap-1">
             <Star className="w-3.5 h-3.5 text-agri-star fill-current" />
             <span>4.8 / 5.0</span>
@@ -72,7 +74,7 @@ export const SellerCard = ({ seller = null, onContactSeller = null }) => {
           leftIcon={<Store className="w-3.5 h-3.5" />}
           onClick={() => {}}
         >
-          Visit Storefront
+          {t('home.visit_store')}
         </Button>
         <Button
           variant="secondary"
@@ -81,7 +83,7 @@ export const SellerCard = ({ seller = null, onContactSeller = null }) => {
           leftIcon={<MessageSquare className="w-3.5 h-3.5" />}
           onClick={onContactSeller || (() => {})}
         >
-          Chat with Seller
+          {t('product.contact_seller_btn')}
         </Button>
       </div>
     </div>

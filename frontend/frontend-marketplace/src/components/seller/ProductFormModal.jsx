@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import Modal from '../common/Modal';
 import Button from '../common/Button';
@@ -15,6 +16,7 @@ export const ProductFormModal = ({
   productToEdit = null,
   onSaved,
 }) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
     category_id: 'seeds',
@@ -126,31 +128,31 @@ export const ProductFormModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={productToEdit ? 'Edit Product Listing' : 'Add New Agricultural Product'}
+      title={productToEdit ? t('seller.modal_edit_title') : t('seller.modal_add_title')}
       maxWidth="max-w-2xl"
     >
       <form onSubmit={handleSubmit} className="space-y-4 text-xs">
         {/* Basic Information */}
         <div className="space-y-3">
           <h4 className="font-bold text-gray-900 text-xs uppercase tracking-wider text-agri-primary">
-            1. Basic Information
+            {t('seller.sec_basic')}
           </h4>
 
           <div>
-            <label className="block font-bold text-gray-800 mb-1">Product Title *</label>
+            <label className="block font-bold text-gray-800 mb-1">{t('seller.product_title')}</label>
             <input
               type="text"
               required
               value={formData.name}
               onChange={(e) => handleChange('name', e.target.value)}
-              placeholder="e.g. Mahyco Hybrid Cotton Seeds (Bollgard II) 450g"
+              placeholder={t('seller.product_title_ph')}
               className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs outline-none focus:border-agri-primary"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block font-bold text-gray-800 mb-1">Category *</label>
+              <label className="block font-bold text-gray-800 mb-1">{t('seller.category')}</label>
               <select
                 value={formData.category_id}
                 onChange={(e) => handleChange('category_id', e.target.value)}
@@ -165,29 +167,29 @@ export const ProductFormModal = ({
             </div>
 
             <div>
-              <label className="block font-bold text-gray-800 mb-1">Unit of Measure *</label>
+              <label className="block font-bold text-gray-800 mb-1">{t('seller.unit_of_measure')}</label>
               <select
                 value={formData.unit}
                 onChange={(e) => handleChange('unit', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs bg-white outline-none focus:border-agri-primary"
               >
-                <option value="kg">Kilogram (kg)</option>
-                <option value="packet">Packet / Pouch</option>
-                <option value="bag">Bag (50kg / 25kg)</option>
-                <option value="bottle">Bottle (500ml / 1L)</option>
-                <option value="piece">Piece / Equipment</option>
-                <option value="roll">Roll / Coil</option>
+                <option value="kg">{t('seller.unit_kg')}</option>
+                <option value="packet">{t('seller.unit_packet')}</option>
+                <option value="bag">{t('seller.unit_bag')}</option>
+                <option value="bottle">{t('seller.unit_bottle')}</option>
+                <option value="piece">{t('seller.unit_piece')}</option>
+                <option value="roll">{t('seller.unit_roll')}</option>
               </select>
             </div>
           </div>
 
           <div>
-            <label className="block font-bold text-gray-800 mb-1">Detailed Description</label>
+            <label className="block font-bold text-gray-800 mb-1">{t('seller.desc_label')}</label>
             <textarea
               rows={3}
               value={formData.description}
               onChange={(e) => handleChange('description', e.target.value)}
-              placeholder="Describe benefits, application dosage, crop compatibility, and storage instructions..."
+              placeholder={t('seller.desc_ph')}
               className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs outline-none focus:border-agri-primary resize-none"
             />
           </div>
@@ -196,12 +198,12 @@ export const ProductFormModal = ({
         {/* Pricing & Inventory */}
         <div className="space-y-3 pt-2 border-t border-gray-100">
           <h4 className="font-bold text-gray-900 text-xs uppercase tracking-wider text-agri-primary">
-            2. Pricing & Inventory
+            {t('seller.sec_pricing')}
           </h4>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div>
-              <label className="block font-bold text-gray-800 mb-1">Selling Price (₹) *</label>
+              <label className="block font-bold text-gray-800 mb-1">{t('seller.selling_price')}</label>
               <input
                 type="number"
                 required
@@ -214,7 +216,7 @@ export const ProductFormModal = ({
             </div>
 
             <div>
-              <label className="block font-bold text-gray-800 mb-1">Discount (%)</label>
+              <label className="block font-bold text-gray-800 mb-1">{t('seller.discount_pct')}</label>
               <input
                 type="number"
                 min={0}
@@ -227,7 +229,7 @@ export const ProductFormModal = ({
             </div>
 
             <div>
-              <label className="block font-bold text-gray-800 mb-1">Stock Available</label>
+              <label className="block font-bold text-gray-800 mb-1">{t('seller.stock_available')}</label>
               <input
                 type="number"
                 min={0}
@@ -239,7 +241,7 @@ export const ProductFormModal = ({
             </div>
 
             <div>
-              <label className="block font-bold text-gray-800 mb-1">Min Order Qty</label>
+              <label className="block font-bold text-gray-800 mb-1">{t('seller.min_order_qty')}</label>
               <input
                 type="number"
                 min={1}
@@ -255,11 +257,11 @@ export const ProductFormModal = ({
         {/* Media & Tags */}
         <div className="space-y-3 pt-2 border-t border-gray-100">
           <h4 className="font-bold text-gray-900 text-xs uppercase tracking-wider text-agri-primary">
-            3. Photos & Search Tags
+            {t('seller.sec_media')}
           </h4>
 
           <div>
-            <label className="block font-bold text-gray-800 mb-1">Image URLs (Unsplash / CDN)</label>
+            <label className="block font-bold text-gray-800 mb-1">{t('seller.image_urls')}</label>
             {formData.image_urls.map((url, index) => (
               <input
                 key={index}
@@ -276,18 +278,18 @@ export const ProductFormModal = ({
                 onClick={addImageUrlField}
                 className="text-agri-primary font-bold hover:underline text-[11px]"
               >
-                + Add Another Image URL
+                {t('seller.add_another_img')}
               </button>
             )}
           </div>
 
           <div>
-            <label className="block font-bold text-gray-800 mb-1">Search Tags (Comma separated)</label>
+            <label className="block font-bold text-gray-800 mb-1">{t('seller.search_tags')}</label>
             <input
               type="text"
               value={formData.tags}
               onChange={(e) => handleChange('tags', e.target.value)}
-              placeholder="e.g. cotton, hybrid, mahyco, bollgard"
+              placeholder={t('seller.search_tags_ph')}
               className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs outline-none focus:border-agri-primary"
             />
           </div>
@@ -302,7 +304,7 @@ export const ProductFormModal = ({
               onChange={(e) => handleChange('allow_bargaining', e.target.checked)}
               className="w-4 h-4 text-agri-primary rounded focus:ring-agri-primary accent-agri-primary"
             />
-            <span>💬 Allow Price Bargaining for this Product</span>
+            <span>{t('seller.allow_bargaining_toggle')}</span>
           </label>
 
           <label className="flex items-center gap-2 cursor-pointer font-bold text-gray-800">
@@ -312,17 +314,17 @@ export const ProductFormModal = ({
               onChange={(e) => handleChange('is_active', e.target.checked)}
               className="w-4 h-4 text-agri-primary rounded focus:ring-agri-primary accent-agri-primary"
             />
-            <span>🟢 Active & Visible on AgriMart Catalog</span>
+            <span>{t('seller.active_toggle')}</span>
           </label>
         </div>
 
         {/* Modal Buttons */}
         <div className="flex items-center justify-end gap-2 pt-3 border-t border-gray-200">
           <Button variant="secondary" onClick={onClose} disabled={isSubmitting}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button type="submit" variant="primary" isLoading={isSubmitting}>
-            {productToEdit ? 'Save Changes' : 'Publish Product'}
+            {productToEdit ? t('seller.save_changes') : t('seller.publish_product')}
           </Button>
         </div>
       </form>
@@ -331,3 +333,4 @@ export const ProductFormModal = ({
 };
 
 export default ProductFormModal;
+

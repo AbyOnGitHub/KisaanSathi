@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { MessageSquareQuote, ShoppingCart, ArrowRight, Clock } from 'lucide-react';
 import BargainStatusBadge from './BargainStatusBadge';
 import { formatPrice, timeAgo } from '../../utils/formatters';
@@ -11,6 +12,7 @@ import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 
 export const BargainCard = ({ session }) => {
+  const { t } = useTranslation();
   const { addToCart } = useCart();
   const { user } = useAuth();
 
@@ -58,21 +60,21 @@ export const BargainCard = ({ session }) => {
           </Link>
 
           <p className="text-xs text-gray-500 mt-0.5">
-            Seller: <strong className="text-gray-700">{seller.business_name || seller.full_name || 'Agri Dealer'}</strong>
+            {t('bargain.seller_label', { name: seller.business_name || seller.full_name || 'Agri Dealer' })}
           </p>
 
           <div className="flex items-center gap-3 text-xs mt-1.5 flex-wrap">
             <span>
-              Listed: <span className="line-through text-gray-400">{formatPrice(session.original_price)}</span>
+              {t('bargain.original_listed', { price: formatPrice(session.original_price) })}
             </span>
             <span>
-              Latest Offer:{' '}
+              {t('common.price')}:{' '}
               <strong className="text-agri-primary text-sm font-extrabold">
                 {formatPrice(latestOffer?.offered_price || session.original_price)}
               </strong>
             </span>
             <span className="text-gray-400 text-[11px]">
-              (Round {offers.length}/10)
+              ({t('bargain.round_count', { current: offers.length, max: 10 })})
             </span>
           </div>
         </div>
@@ -86,7 +88,7 @@ export const BargainCard = ({ session }) => {
             className="bg-agri-primary hover:bg-agri-dark text-white text-xs font-bold px-3 py-2 rounded-md flex items-center gap-1.5 shadow-xs transition"
           >
             <ShoppingCart className="w-4 h-4" />
-            <span>Add at {formatPrice(session.settled_price)}</span>
+            <span>{t('bargain.add_to_cart_settled', { price: formatPrice(session.settled_price) })}</span>
           </button>
         )}
 
@@ -95,7 +97,7 @@ export const BargainCard = ({ session }) => {
           className="bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold px-4 py-2 rounded-md flex items-center gap-1 transition"
         >
           <MessageSquareQuote className="w-4 h-4 text-agri-primary" />
-          <span>View Chat</span>
+          <span>{t('common.details')}</span>
           <ArrowRight className="w-3.5 h-3.5 ml-1" />
         </Link>
       </div>

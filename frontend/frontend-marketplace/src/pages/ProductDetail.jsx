@@ -5,8 +5,8 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import toast from 'react-hot-toast';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   ShoppingCart,
   Zap,
@@ -31,6 +31,7 @@ import { formatPrice, getEstimatedDeliveryDate } from '../utils/formatters';
 import api from '../utils/api';
 
 export const ProductDetail = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
@@ -71,7 +72,7 @@ export const ProductDetail = () => {
     return (
       <div className="max-w-7xl mx-auto px-4 py-16 text-center text-gray-500">
         <div className="w-10 h-10 border-4 border-agri-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-        <p className="text-xs font-semibold text-gray-600">Loading product specifications from AgriMart...</p>
+        <p className="text-xs font-semibold text-gray-600">{t('common.loading')}</p>
       </div>
     );
   }
@@ -81,9 +82,9 @@ export const ProductDetail = () => {
       <div className="max-w-5xl mx-auto px-4 py-12">
         <EmptyState
           icon={<AlertCircle className="w-12 h-12 text-red-500" />}
-          title="Product Not Available"
-          description={error || "The agricultural product you are searching for does not exist or has been discontinued."}
-          actionText="Explore AgriMart Catalog"
+          title={t('product.not_available_title')}
+          description={error || t('product.not_available_desc')}
+          actionText={t('product.explore_catalog_btn')}
           onAction={() => navigate('/products')}
         />
       </div>
@@ -108,8 +109,8 @@ export const ProductDetail = () => {
   };
 
   const breadcrumbs = [
-    { label: 'Marketplace', href: '/products' },
-    { label: product.category?.name || 'Category', href: `/products?category=${product.category?.slug || 'seeds'}` },
+    { label: t('footer.marketplace_catalog'), href: '/products' },
+    { label: product.category?.name || t('catalog.category_title'), href: `/products?category=${product.category?.slug || 'seeds'}` },
     { label: product.name },
   ];
 
@@ -132,7 +133,7 @@ export const ProductDetail = () => {
         <div className="lg:col-span-4 space-y-4">
           <div>
             <span className="text-[10px] text-agri-primary font-bold uppercase tracking-wider bg-green-50 px-2 py-0.5 rounded">
-              {product.category?.name || 'Verified Agro Supply'}
+              {product.category?.name || t('product.verified_badge')}
             </span>
             <h1 className="text-base sm:text-xl font-black text-gray-900 leading-snug mt-1">
               {product.name}
@@ -140,7 +141,7 @@ export const ProductDetail = () => {
             <div className="flex items-center gap-2 mt-1.5">
               <StarRating rating={product.rating || 4.6} totalReviews={product.total_reviews || 184} size={14} />
               <span className="text-gray-300">|</span>
-              <span className="text-xs text-agri-primary font-semibold">1,000+ Bought this season</span>
+              <span className="text-xs text-agri-primary font-semibold">{t('product.bought_this_season')}</span>
             </div>
           </div>
 
@@ -153,19 +154,19 @@ export const ProductDetail = () => {
               <span className="text-xs font-semibold text-gray-600">/ {product.unit || 'unit'}</span>
               {mrp && (
                 <span className="text-sm text-gray-400 line-through">
-                  MRP: {formatPrice(mrp)}
+                  {t('common.mrp')}: {formatPrice(mrp)}
                 </span>
               )}
               {discount > 0 && (
                 <span className="bg-agri-hot text-white font-extrabold text-xs px-2 py-0.5 rounded">
-                  {discount}% OFF
+                  {t('common.off', { discount })}
                 </span>
               )}
             </div>
 
             {savings > 0 && (
               <p className="text-xs font-bold text-green-800">
-                You save {formatPrice(savings)} ({discount}%) inclusive of all taxes
+                {t('common.you_save', { amount: formatPrice(savings), discount })}
               </p>
             )}
           </div>
@@ -175,7 +176,7 @@ export const ProductDetail = () => {
 
           {/* Quantity Selector */}
           <div className="flex items-center gap-4 pt-1">
-            <span className="text-xs font-bold text-gray-800">Quantity:</span>
+            <span className="text-xs font-bold text-gray-800">{t('product.quantity_label')}</span>
             <div className="flex items-center border border-gray-300 rounded-md overflow-hidden bg-white">
               <button
                 onClick={() => setQuantity(Math.max(product.min_order || 1, quantity - 1))}
@@ -195,7 +196,7 @@ export const ProductDetail = () => {
             </div>
             {product.min_order > 1 && (
               <span className="text-[11px] text-gray-500">
-                Min. Order: {product.min_order} {product.unit}
+                {t('product.min_order', { count: product.min_order, unit: product.unit })}
               </span>
             )}
           </div>
@@ -210,7 +211,7 @@ export const ProductDetail = () => {
               onClick={handleAddToCart}
               leftIcon={<ShoppingCart className="w-5 h-5" />}
             >
-              Add to Shopping Cart ({formatPrice(basePrice * quantity)})
+              {t('product.add_to_cart', { amount: formatPrice(basePrice * quantity) })}
             </Button>
 
             <Button
@@ -220,7 +221,7 @@ export const ProductDetail = () => {
               onClick={handleBuyNow}
               leftIcon={<Zap className="w-5 h-5" />}
             >
-              Buy Now (Cash on Delivery / UPI)
+              {t('product.buy_now')}
             </Button>
 
             {product.allow_bargaining && (
@@ -231,7 +232,7 @@ export const ProductDetail = () => {
                 onClick={() => setBargainModalOpen(true)}
                 leftIcon={<MessageSquareQuote className="w-5 h-5" />}
               >
-                💬 Start Price Bargain with Seller
+                {t('product.start_bargain')}
               </Button>
             )}
           </div>
@@ -241,16 +242,16 @@ export const ProductDetail = () => {
             <div className="flex items-center gap-2 text-gray-700">
               <Truck className="w-4 h-4 text-agri-primary" />
               <span>
-                Free delivery by <strong className="text-gray-900">{deliveryDate}</strong> to your PIN code.
+                {t('product.free_delivery_to', { date: deliveryDate })}
               </span>
             </div>
             <div className="flex items-center gap-2 text-gray-700">
               <RotateCcw className="w-4 h-4 text-amber-600" />
-              <span>7 Days Returnable if seal is intact.</span>
+              <span>{t('common.days_return')}</span>
             </div>
             <div className="flex items-center gap-2 text-gray-700">
               <ShieldCheck className="w-4 h-4 text-blue-600" />
-              <span>100% Buyer Protection by AgriMart.</span>
+              <span>{t('common.buyer_protection')}</span>
             </div>
           </div>
         </div>
@@ -273,7 +274,7 @@ export const ProductDetail = () => {
                 : 'text-gray-500 hover:text-gray-900'
             }`}
           >
-            Description & Usage
+            {t('product.tab_desc')}
           </button>
           <button
             onClick={() => setActiveTab('specs')}
@@ -283,7 +284,7 @@ export const ProductDetail = () => {
                 : 'text-gray-500 hover:text-gray-900'
             }`}
           >
-            Technical Specifications
+            {t('product.tab_specs')}
           </button>
           <button
             onClick={() => setActiveTab('reviews')}
@@ -293,7 +294,7 @@ export const ProductDetail = () => {
                 : 'text-gray-500 hover:text-gray-900'
             }`}
           >
-            Ratings & Farmer Reviews ({product.total_reviews || 0})
+            {t('product.tab_reviews', { count: product.total_reviews || 0 })}
           </button>
         </div>
 
@@ -310,24 +311,24 @@ export const ProductDetail = () => {
             <table className="w-full text-left">
               <tbody className="divide-y divide-gray-200">
                 <tr className="bg-gray-50">
-                  <td className="py-2.5 px-4 font-bold text-gray-700 w-1/3">Brand / Supplier</td>
-                  <td className="py-2.5 px-4 text-gray-900">{product.seller?.business_name || product.seller?.full_name || 'AgriMart Direct'}</td>
+                  <td className="py-2.5 px-4 font-bold text-gray-700 w-1/3">{t('product.brand_supplier')}</td>
+                  <td className="py-2.5 px-4 text-gray-900">{product.seller?.business_name || product.seller?.full_name || t('product.agrimart_direct')}</td>
                 </tr>
                 <tr>
-                  <td className="py-2.5 px-4 font-bold text-gray-700">Category</td>
+                  <td className="py-2.5 px-4 font-bold text-gray-700">{t('catalog.category_title')}</td>
                   <td className="py-2.5 px-4 text-gray-900">{product.category?.name || 'Farm Inputs'}</td>
                 </tr>
                 <tr className="bg-gray-50">
-                  <td className="py-2.5 px-4 font-bold text-gray-700">Packaging Unit</td>
+                  <td className="py-2.5 px-4 font-bold text-gray-700">{t('product.packaging_unit')}</td>
                   <td className="py-2.5 px-4 text-gray-900">{product.unit || 'Standard Pack'}</td>
                 </tr>
                 <tr>
-                  <td className="py-2.5 px-4 font-bold text-gray-700">Stock Availability</td>
-                  <td className="py-2.5 px-4 text-gray-900">{product.stock} units ready to ship</td>
+                  <td className="py-2.5 px-4 font-bold text-gray-700">{t('product.stock_availability')}</td>
+                  <td className="py-2.5 px-4 text-gray-900">{t('common.units_ready', { count: product.stock })}</td>
                 </tr>
                 <tr className="bg-gray-50">
-                  <td className="py-2.5 px-4 font-bold text-gray-700">Govt. Verification</td>
-                  <td className="py-2.5 px-4 text-green-700 font-bold">✓ CIB / APMC Registered</td>
+                  <td className="py-2.5 px-4 font-bold text-gray-700">{t('product.govt_verification')}</td>
+                  <td className="py-2.5 px-4 text-green-700 font-bold">{t('product.cib_registered')}</td>
                 </tr>
               </tbody>
             </table>
@@ -340,7 +341,7 @@ export const ProductDetail = () => {
             <div className="flex flex-col sm:flex-row sm:items-center gap-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
               <div className="text-center sm:text-left">
                 <span className="text-3xl font-black text-gray-900">{product.rating || 4.6}</span>
-                <span className="text-xs text-gray-500 block">out of 5 stars</span>
+                <span className="text-xs text-gray-500 block">{t('product.out_of_5_stars')}</span>
                 <div className="mt-1">
                   <StarRating rating={product.rating || 4.6} showNumber={false} size={16} />
                 </div>

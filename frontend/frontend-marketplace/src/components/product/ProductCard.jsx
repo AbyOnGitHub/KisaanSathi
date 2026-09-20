@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Heart, ShoppingCart, MessageSquareQuote, CheckCircle2, Truck } from 'lucide-react';
 import StarRating from '../common/StarRating';
 import PriceDisplay from './PriceDisplay';
@@ -12,6 +13,7 @@ import { useCart } from '../../context/CartContext';
 import { getEstimatedDeliveryDate } from '../../utils/formatters';
 
 export const ProductCard = ({ product, onBargainClick = null }) => {
+  const { t } = useTranslation();
   const { addToCart } = useCart();
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
@@ -20,7 +22,7 @@ export const ProductCard = ({ product, onBargainClick = null }) => {
     product.image_urls?.[0] ||
     'https://images.unsplash.com/photo-1594488518002-390919246193?w=500&auto=format&fit=crop&q=80';
 
-  const sellerName = product.seller?.business_name || product.seller?.full_name || 'Verified Seller';
+  const sellerName = product.seller?.business_name || product.seller?.full_name || t('product.seller_verified_badge');
   const deliveryDate = getEstimatedDeliveryDate(3);
 
   const handleAddToCart = async (e) => {
@@ -59,14 +61,14 @@ export const ProductCard = ({ product, onBargainClick = null }) => {
         {/* Top-Left Discount Badge */}
         {product.discount_percent > 0 && (
           <div className="absolute top-2 left-2 bg-agri-hot text-white text-[10px] font-black px-1.5 py-0.5 rounded shadow-xs uppercase tracking-wide">
-            {product.discount_percent}% OFF
+            {t('common.off', { discount: product.discount_percent })}
           </div>
         )}
 
         {/* Top-Right Bargain Available Badge */}
         {product.allow_bargaining && (
           <div className="absolute top-2 right-2 bg-agri-accent text-gray-900 font-extrabold text-[10px] px-2 py-0.5 rounded-full shadow-xs flex items-center gap-1">
-            <span>💬 Bargain</span>
+            <span>💬 {t('nav.bargains')}</span>
           </div>
         )}
 
@@ -87,7 +89,7 @@ export const ProductCard = ({ product, onBargainClick = null }) => {
         <div>
           {/* Category Tag */}
           <span className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">
-            {product.category?.name || 'Farm Supply'}
+            {product.category?.name || t('catalog.category_title')}
           </span>
 
           {/* Product Title (2-lines max) */}
@@ -116,7 +118,7 @@ export const ProductCard = ({ product, onBargainClick = null }) => {
 
           {/* Seller Line with Verified Checkmark */}
           <p className="text-[11px] text-gray-500 truncate flex items-center gap-1">
-            <span>by {sellerName}</span>
+            <span>{t('common.by_seller', { name: sellerName })}</span>
             {product.seller?.is_verified && (
               <CheckCircle2 className="w-3 h-3 text-agri-primary flex-shrink-0" />
             )}
@@ -125,7 +127,7 @@ export const ProductCard = ({ product, onBargainClick = null }) => {
           {/* Delivery Estimate */}
           <div className="flex items-center gap-1 text-[10px] text-gray-600 mt-1">
             <Truck className="w-3 h-3 text-agri-primary" />
-            <span>Free delivery by <strong className="text-gray-900">{deliveryDate}</strong></span>
+            <span>{t('common.free_delivery_by', { date: deliveryDate })}</span>
           </div>
         </div>
 
@@ -137,7 +139,7 @@ export const ProductCard = ({ product, onBargainClick = null }) => {
             className="w-full bg-agri-primary hover:bg-agri-dark text-white text-xs font-bold py-1.5 px-2 rounded flex items-center justify-center gap-1 transition shadow-2xs disabled:opacity-50"
           >
             <ShoppingCart className="w-3.5 h-3.5" />
-            <span>{product.stock <= 0 ? 'Out of Stock' : 'Add'}</span>
+            <span>{product.stock <= 0 ? t('common.out_of_stock') : t('common.add')}</span>
           </button>
 
           {product.allow_bargaining ? (
@@ -146,14 +148,14 @@ export const ProductCard = ({ product, onBargainClick = null }) => {
               className="w-full bg-amber-50 hover:bg-amber-100 text-amber-900 border border-agri-accent text-xs font-bold py-1.5 px-2 rounded flex items-center justify-center gap-1 transition"
             >
               <MessageSquareQuote className="w-3.5 h-3.5 text-agri-accent" />
-              <span>Bargain</span>
+              <span>{t('nav.bargains')}</span>
             </button>
           ) : (
             <Link
               to={`/products/${product.id}`}
               className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-semibold py-1.5 px-2 rounded flex items-center justify-center text-center transition"
             >
-              Details
+              {t('common.details')}
             </Link>
           )}
         </div>

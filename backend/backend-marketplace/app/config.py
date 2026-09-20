@@ -20,8 +20,10 @@ class Settings(BaseSettings):
     # External APIs
     DATA_GOV_API_KEY: str = ""
 
-    # Payment integration
+    # Payment integration (Razorpay Test Mode)
     PAYMENT_MODE: str = "testing"
+    RAZORPAY_KEY_ID: str = "rzp_test_placeholder"
+    RAZORPAY_KEY_SECRET: str = "placeholder_secret"
 
     model_config = SettingsConfigDict(
         env_file=".env",

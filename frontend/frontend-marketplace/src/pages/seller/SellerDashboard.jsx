@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard,
   Layers,
@@ -23,6 +24,7 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../utils/api';
 
 export const SellerDashboard = () => {
+  const { t } = useTranslation();
   const { profile } = useAuth();
   const [activeTab, setActiveTab] = useState('products'); // 'dashboard', 'products', 'orders', 'bargains'
   const [addProductModalOpen, setAddProductModalOpen] = useState(false);
@@ -63,10 +65,10 @@ export const SellerDashboard = () => {
   }, [profile]);
 
   const sidebarLinks = [
-    { id: 'dashboard', label: 'Overview', icon: <LayoutDashboard className="w-4 h-4" /> },
-    { id: 'products', label: 'My Products', icon: <Layers className="w-4 h-4" /> },
-    { id: 'orders', label: 'Received Orders', icon: <Package className="w-4 h-4" /> },
-    { id: 'bargains', label: 'Bargain Requests', icon: <MessageSquareQuote className="w-4 h-4" /> },
+    { id: 'dashboard', label: t('seller.tab_overview'), icon: <LayoutDashboard className="w-4 h-4" /> },
+    { id: 'products', label: t('seller.tab_my_products'), icon: <Layers className="w-4 h-4" /> },
+    { id: 'orders', label: t('seller.tab_received_orders'), icon: <Package className="w-4 h-4" /> },
+    { id: 'bargains', label: t('seller.tab_bargain_requests'), icon: <MessageSquareQuote className="w-4 h-4" /> },
   ];
 
   return (
@@ -79,17 +81,17 @@ export const SellerDashboard = () => {
           </div>
           <div>
             <span className="text-[10px] font-bold text-green-400 uppercase tracking-wider">
-              Seller Central Dashboard
+              {t('seller.dashboard_title')}
             </span>
             <h1 className="text-lg sm:text-xl font-black tracking-tight">
               {profile?.business_name || profile?.full_name || 'AgriMart Seller'}
             </h1>
             <p className="text-xs text-gray-400 flex items-center gap-1.5 mt-0.5">
-              <span>Verified Agricultural Dealer</span>
+              <span>{t('seller.verified_dealer')}</span>
               {profile?.gstin_or_license && (
                 <>
                   <span>•</span>
-                  <span>GSTIN: {profile.gstin_or_license}</span>
+                  <span>{t('seller.gstin_label', { gstin: profile.gstin_or_license })}</span>
                 </>
               )}
             </p>
@@ -103,7 +105,7 @@ export const SellerDashboard = () => {
             onClick={() => setAddProductModalOpen(true)}
             leftIcon={<Plus className="w-4 h-4" />}
           >
-            Add New Product
+            {t('seller.add_new_product')}
           </Button>
         </div>
       </div>
@@ -175,3 +177,4 @@ export const SellerDashboard = () => {
 };
 
 export default SellerDashboard;
+

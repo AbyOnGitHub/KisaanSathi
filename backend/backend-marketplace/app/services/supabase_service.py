@@ -3,6 +3,7 @@ Supabase service layer containing helper functions for interacting with database
 Provides clean query methods with error handling and relational mapping.
 """
 
+import re
 from typing import Dict, Any, List, Optional
 from fastapi import HTTPException, status
 from app.database import get_supabase
@@ -35,16 +36,13 @@ class SupabaseService:
         search: Optional[str] = None,
         min_price: Optional[float] = None,
         max_price: Optional[float] = None,
-        sort_by: Optional[str] = None,
+        sort_by: Optional[str] = "created_at",
         page: int = 1,
         limit: int = 20,
         seller_id: Optional[str] = None,
         only_active: bool = True
     ) -> Dict[str, Any]:
-        """
-        Fetch products with search, filtering, sorting, and pagination.
-        Includes seller and category relational data.
-        """
+        """Query products with dynamic filters, search, sorting, and pagination."""
         supabase = get_supabase()
         try:
             # Base query including related category and seller profiles
@@ -69,7 +67,50 @@ class SupabaseService:
                     return {"data": [], "page": page, "limit": limit, "total": 0}
 
             if search:
-                query = query.ilike("name", f"%{search}%")
+                # Clean & sanitize search term (remove trailing full stops, dandas, pipes, quotes, etc.)
+                clean_term = re.sub(r'[\u0964\u0965|.,!?;:()\[\]{}"\'`~*#_—–-]+', ' ', search).strip()
+                if clean_term:
+                    search_conditions = [
+                        f"name.ilike.%{clean_term}%",
+                        f"description.ilike.%{clean_term}%"
+                    ]
+
+                    # Hindi to English keyword mapping for agricultural terms
+                    HINDI_AGRI_MAP = {
+                        "कपास": "cotton",
+                        "kapas": "cotton",
+                        "बीज": "seed",
+                        "beej": "seed",
+                        "खाद": "fertilizer",
+                        "उर्वरक": "fertilizer",
+                        "यूरिया": "urea",
+                        "डीएपी": "dap",
+                        "कीटनाशक": "pesticide",
+                        "दवा": "pesticide",
+                        "फफूंदनाशक": "fungicide",
+                        "धान": "paddy",
+                        "चावल": "rice",
+                        "गेहूं": "wheat",
+                        "मक्का": "maize",
+                        "सोयाबीन": "soybean",
+                        "स्प्रेयर": "sprayer",
+                        "स्प्रे": "spray",
+                        "पंप": "pump",
+                        "ड्रिप": "drip",
+                        "सिंचाई": "irrigation",
+                        "पाइप": "pipe",
+                        "ट्रैक्टर": "tractor",
+                    }
+
+                    clean_lower = clean_term.lower()
+                    for hi_key, en_val in HINDI_AGRI_MAP.items():
+                        if hi_key in clean_lower:
+                            search_conditions.append(f"name.ilike.%{en_val}%")
+                            search_conditions.append(f"description.ilike.%{en_val}%")
+
+                    # Deduplicate conditions
+                    unique_conditions = list(dict.fromkeys(search_conditions))
+                    query = query.or_(",".join(unique_conditions))
 
             if min_price is not None:
                 query = query.gte("price", min_price)
@@ -88,9 +129,10 @@ class SupabaseService:
                 # Default newest first
                 query = query.order("created_at", desc=True)
 
-            # Pagination range (0-indexed in Supabase PostgREST)
-            offset = (page - 1) * limit
-            query = query.range(offset, offset + limit - 1)
+            # Ensure limit is within valid bounds (1 to 100, default 20)
+            safe_limit = min(max(1, limit), 100)
+            offset = (page - 1) * safe_limit
+            query = query.range(offset, offset + safe_limit - 1)
 
             res = query.execute()
             total_count = res.count if res.count is not None else len(res.data or [])
@@ -98,7 +140,7 @@ class SupabaseService:
             return {
                 "data": res.data or [],
                 "page": page,
-                "limit": limit,
+                "limit": safe_limit,
                 "total": total_count
             }
         except Exception as e:

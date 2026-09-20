@@ -5,7 +5,8 @@
 
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ShoppingBag, ArrowLeft, ShieldCheck, Tag } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { ShoppingBag, ArrowLeft } from 'lucide-react';
 import CartItem from '../components/cart/CartItem';
 import CartSummary from '../components/cart/CartSummary';
 import EmptyCart from '../components/cart/EmptyCart';
@@ -13,12 +14,13 @@ import Breadcrumbs from '../components/layout/Breadcrumbs';
 import { useCart } from '../context/CartContext';
 
 export const Cart = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { items, totalAmount, clearCart, loading } = useCart();
 
   const breadcrumbs = [
-    { label: 'Marketplace', href: '/products' },
-    { label: 'Shopping Cart' },
+    { label: t('footer.marketplace_catalog'), href: '/products' },
+    { label: t('cart.cart_title') },
   ];
 
   if (!loading && (!items || items.length === 0)) {
@@ -40,13 +42,13 @@ export const Cart = () => {
           <div className="bg-white rounded-lg border border-agri-border p-4 flex items-center justify-between">
             <h1 className="text-lg font-black text-gray-900 flex items-center gap-2">
               <ShoppingBag className="w-5 h-5 text-agri-primary" />
-              <span>Shopping Cart ({items.length} {items.length === 1 ? 'Product' : 'Products'})</span>
+              <span>{t('cart.cart_title')} ({items.length})</span>
             </h1>
             <button
               onClick={clearCart}
               className="text-xs text-red-600 hover:underline font-semibold"
             >
-              Empty Cart
+              {t('cart.clear_cart')}
             </button>
           </div>
 
@@ -63,7 +65,7 @@ export const Cart = () => {
               className="text-xs font-bold text-agri-primary hover:underline flex items-center gap-1"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Continue Browsing Farm Inputs</span>
+              <span>{t('cart.continue_shopping')}</span>
             </Link>
           </div>
         </div>
@@ -74,7 +76,7 @@ export const Cart = () => {
             items={items}
             totalAmount={totalAmount}
             onProceed={() => navigate('/checkout')}
-            buttonText="Proceed to Checkout"
+            buttonText={t('cart.proceed_to_checkout')}
           />
         </div>
       </div>

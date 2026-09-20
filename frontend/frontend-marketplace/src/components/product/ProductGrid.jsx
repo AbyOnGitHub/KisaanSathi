@@ -13,9 +13,11 @@ export const ProductGrid = ({
   onBargainClick = null,
   emptyTitle = 'No products available',
   emptyDescription = 'Try adjusting your search filters or browse other categories.',
+  emptyActionText = null,
+  onEmptyAction = null,
 }) => {
   if (loading) {
-    return <ProductGridSkeleton count={10} />;
+    return <ProductGridSkeleton count={8} />;
   }
 
   if (!products || products.length === 0) {
@@ -23,6 +25,8 @@ export const ProductGrid = ({
       <EmptyState
         title={emptyTitle}
         description={emptyDescription}
+        actionText={emptyActionText}
+        onAction={onEmptyAction}
       />
     );
   }

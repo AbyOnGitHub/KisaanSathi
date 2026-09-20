@@ -18,6 +18,7 @@ from app.routes import (
     bargain,
     market_prices,
     sellers,
+    payments,
 )
 
 # Initialize FastAPI application
@@ -92,6 +93,7 @@ app.include_router(orders.router)
 app.include_router(bargain.router)
 app.include_router(market_prices.router)
 app.include_router(sellers.router)
+app.include_router(payments.router)
 
 
 # Root and Health Check Endpoints

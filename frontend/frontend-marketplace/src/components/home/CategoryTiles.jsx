@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import api from '../../utils/api';
 
 const DEFAULT_CATEGORY_METADATA = {
@@ -18,6 +19,7 @@ const DEFAULT_CATEGORY_METADATA = {
 };
 
 export const CategoryTiles = () => {
+  const { t } = useTranslation();
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
@@ -52,10 +54,10 @@ export const CategoryTiles = () => {
     <div className="bg-white rounded-xl border border-agri-border p-5 my-6 shadow-xs">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-base sm:text-lg font-bold text-gray-900">
-          Shop by Farm Category
+          {t('home.shop_by_category')}
         </h3>
         <Link to="/products" className="text-xs font-bold text-agri-primary hover:underline">
-          View All Categories →
+          {t('home.view_all_categories')}
         </Link>
       </div>
 

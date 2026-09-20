@@ -3,6 +3,7 @@
  */
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { MessageSquareQuote, Check, X, ArrowRight, User } from 'lucide-react';
 import Button from '../common/Button';
@@ -10,6 +11,7 @@ import { formatPrice, timeAgo } from '../../utils/formatters';
 import api from '../../utils/api';
 
 export const SellerBargainCard = ({ session, onActionDone }) => {
+  const { t } = useTranslation();
   const [counterPrice, setCounterPrice] = useState('');
   const [counterMsg, setCounterMsg] = useState('');
   const [showCounterInput, setShowCounterInput] = useState(false);
@@ -85,12 +87,12 @@ export const SellerBargainCard = ({ session, onActionDone }) => {
             <User className="w-3.5 h-3.5" />
           </div>
           <div>
-            <span className="font-bold text-gray-900 block">{farmer.full_name || 'Farmer Buyer'}</span>
+            <span className="font-bold text-gray-900 block">{farmer.full_name || t('seller.farmer_buyer')}</span>
             <span className="text-[10px] text-gray-400">{timeAgo(session.created_at)}</span>
           </div>
         </div>
         <span className="bg-amber-100 text-amber-900 text-[10px] font-extrabold px-2 py-0.5 rounded-full">
-          Round {offers.length}/10
+          {t('bargain.round_num', { current: offers.length, max: 10 })}
         </span>
       </div>
 
@@ -99,7 +101,7 @@ export const SellerBargainCard = ({ session, onActionDone }) => {
         <div className="min-w-0 flex-1 pr-2">
           <span className="font-semibold text-gray-900 truncate block">{product.name}</span>
           <span className="text-[11px] text-gray-500">
-            Qty requested: <strong>{latestOffer?.quantity || 1} {product.unit || 'units'}</strong>
+            {t('bargain.qty_requested')} <strong>{latestOffer?.quantity || 1} {product.unit || 'units'}</strong>
           </span>
         </div>
 
@@ -126,7 +128,7 @@ export const SellerBargainCard = ({ session, onActionDone }) => {
               <input
                 type="number"
                 required
-                placeholder="Counter Price"
+                placeholder={t('bargain.counter_placeholder')}
                 value={counterPrice}
                 onChange={(e) => setCounterPrice(e.target.value)}
                 className="w-full pl-6 pr-2 py-1.5 border border-gray-300 rounded text-xs outline-none bg-white font-bold text-gray-900"
@@ -137,7 +139,7 @@ export const SellerBargainCard = ({ session, onActionDone }) => {
               disabled={isProcessing}
               className="bg-agri-primary hover:bg-agri-dark text-white font-bold px-3 py-1.5 rounded text-xs transition"
             >
-              Send
+              {t('common.send')}
             </button>
             <button
               type="button"
@@ -149,7 +151,7 @@ export const SellerBargainCard = ({ session, onActionDone }) => {
           </div>
           <input
             type="text"
-            placeholder="Optional message (e.g. Free delivery included at this price)"
+            placeholder={t('bargain.counter_msg_ph')}
             value={counterMsg}
             onChange={(e) => setCounterMsg(e.target.value)}
             className="w-full px-2.5 py-1 border border-gray-300 rounded text-[11px] outline-none bg-white"
@@ -165,7 +167,7 @@ export const SellerBargainCard = ({ session, onActionDone }) => {
             onClick={handleAccept}
             leftIcon={<Check className="w-3.5 h-3.5" />}
           >
-            Accept
+            {t('bargain.accept_btn_short')}
           </Button>
 
           <Button
@@ -174,7 +176,7 @@ export const SellerBargainCard = ({ session, onActionDone }) => {
             onClick={() => setShowCounterInput(true)}
             leftIcon={<MessageSquareQuote className="w-3.5 h-3.5" />}
           >
-            Counter
+            {t('bargain.counter_btn')}
           </Button>
 
           <Button
@@ -184,7 +186,7 @@ export const SellerBargainCard = ({ session, onActionDone }) => {
             onClick={handleReject}
             leftIcon={<X className="w-3.5 h-3.5" />}
           >
-            Reject
+            {t('bargain.reject_btn')}
           </Button>
         </div>
       )}
@@ -193,3 +195,4 @@ export const SellerBargainCard = ({ session, onActionDone }) => {
 };
 
 export default SellerBargainCard;
+
