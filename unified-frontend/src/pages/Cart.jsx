@@ -1,12 +1,12 @@
 /**
  * Shopping Cart Page.
- * 2-Column Amazon layout with bargained savings indicator and instant checkout button.
+ * 2-Column layout with bargained savings indicator, instant checkout, and order status tracking.
  */
 
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ShoppingBag, ArrowLeft } from 'lucide-react';
+import { ShoppingBag, ArrowLeft, Truck, ArrowRight } from 'lucide-react';
 import CartItem from '../components/cart/CartItem';
 import CartSummary from '../components/cart/CartSummary';
 import EmptyCart from '../components/cart/EmptyCart';
@@ -36,6 +36,18 @@ export const Cart = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-8 py-3 space-y-4">
       <Breadcrumbs items={breadcrumbs} />
 
+      {/* Top Banner to Track Other Product Orders */}
+      <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-green-200 px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs text-gray-800 shadow-2xs">
+        <div className="flex items-center gap-2">
+          <Truck className="w-4 h-4 text-green-700 flex-shrink-0" />
+          <span>Need to track other products you've already ordered?</span>
+        </div>
+        <Link to="/orders" className="font-bold text-green-700 hover:text-green-800 flex items-center gap-1 hover:underline">
+          <span>Check Order Status</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Cart Items List (70% - 8 cols) */}
         <div className="lg:col-span-8 space-y-4">
@@ -59,13 +71,21 @@ export const Cart = () => {
             ))}
           </div>
 
-          <div className="flex justify-between items-center bg-white p-4 rounded-lg border border-agri-border">
+          <div className="flex flex-wrap justify-between items-center gap-3 bg-white p-4 rounded-lg border border-agri-border">
             <Link
               to="/products"
               className="text-xs font-bold text-agri-primary hover:underline flex items-center gap-1"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>{t('cart.continue_shopping')}</span>
+            </Link>
+
+            <Link
+              to="/orders"
+              className="text-xs font-bold text-gray-700 hover:text-green-700 flex items-center gap-1.5 hover:underline"
+            >
+              <Truck className="w-4 h-4 text-green-700" />
+              <span>Check Order Status for Other Products</span>
             </Link>
           </div>
         </div>

@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ShieldCheck, Truck, ArrowRight, Tag } from 'lucide-react';
 import Button from '../common/Button';
@@ -112,6 +113,25 @@ export const CartSummary = ({
           <Truck className="w-4 h-4 text-blue-600 flex-shrink-0" />
           <span>{t('home.trust_2_desc')}</span>
         </div>
+      </div>
+
+      {/* Track Other Orders Quick Link */}
+      <div className="mt-4 pt-3 border-t border-gray-100">
+        <Link
+          to="/orders"
+          className="p-3 bg-gray-50 hover:bg-green-50/60 rounded-lg border border-gray-200/80 transition-colors flex items-center justify-between group"
+        >
+          <div className="flex items-center gap-2">
+            <Truck className="w-4 h-4 text-green-700" />
+            <div>
+              <p className="font-bold text-gray-800 text-[11px] group-hover:text-green-800">
+                Track Other Orders
+              </p>
+              <p className="text-[10px] text-gray-500">Check delivery status & invoices</p>
+            </div>
+          </div>
+          <ArrowRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-green-700 group-hover:translate-x-0.5 transition-all" />
+        </Link>
       </div>
     </div>
   );
