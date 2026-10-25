@@ -16,11 +16,11 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../utils/api';
 
 const SELLER_SEED_IDS = {
-  'seller1@agrimart.in': 'a1111111-1111-1111-1111-111111111111',
-  'seller2@agrimart.in': 'a2222222-2222-2222-2222-222222222222',
-  'seller3@agrimart.in': 'a3333333-3333-3333-3333-333333333333',
-  'seller4@agrimart.in': 'a4444444-4444-4444-4444-444444444444',
-  'seller5@agrimart.in': 'a5555555-5555-5555-5555-555555555555',
+  'seller1@agrimart.in': 'a201913b-ca99-4d73-8aae-e1fe1b692865',
+  'seller2@agrimart.in': 'c0665a1a-a407-45e6-89ad-7ce0bad573cb',
+  'seller3@agrimart.in': '62c2dc21-9e16-4abb-a994-0fb980605bc1',
+  'seller4@agrimart.in': 'ff13842b-b0cb-4994-9c1e-afa02a0f322a',
+  'seller5@agrimart.in': 'ba4718ab-3565-4d00-88bc-afe8cb5a8d80',
 };
 
 export const SellerProducts = ({ onOpenAddModal, onProductsChanged }) => {
@@ -36,7 +36,7 @@ export const SellerProducts = ({ onOpenAddModal, onProductsChanged }) => {
       profile?.id ||
       user?.id ||
       (user?.email && SELLER_SEED_IDS[user.email]) ||
-      'a2222222-2222-2222-2222-222222222222';
+      'c0665a1a-a407-45e6-89ad-7ce0bad573cb';
 
     if (!sellerId) {
       setLoading(false);

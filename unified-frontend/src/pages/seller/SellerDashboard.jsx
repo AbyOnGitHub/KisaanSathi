@@ -25,22 +25,34 @@ import api from '../../utils/api';
 
 const SELLER_SEED_DEFAULTS = {
   'seller1@agrimart.in': {
-    id: 'a1111111-1111-1111-1111-111111111111',
+    id: 'a201913b-ca99-4d73-8aae-e1fe1b692865',
     business_name: 'Kisan Seva Kendra (Nagpur)',
-    full_name: 'Ramesh Patel',
+    full_name: 'Ramesh Patil',
     gstin: '27AABCK1234R1Z5',
   },
   'seller2@agrimart.in': {
-    id: 'a2222222-2222-2222-2222-222222222222',
+    id: 'c0665a1a-a407-45e6-89ad-7ce0bad573cb',
     business_name: 'GreenGrow Agri Depot (Indore)',
     full_name: 'Suresh Agrawal',
     gstin: '23AABCS5678R1Z2',
   },
   'seller3@agrimart.in': {
-    id: 'a3333333-3333-3333-3333-333333333333',
+    id: '62c2dc21-9e16-4abb-a994-0fb980605bc1',
     business_name: 'Punjab Crop Solutions (Ludhiana)',
     full_name: 'Gurpreet Singh',
     gstin: '03AABCP9012R1Z8',
+  },
+  'seller4@agrimart.in': {
+    id: 'ff13842b-b0cb-4994-9c1e-afa02a0f322a',
+    business_name: 'Southern Agro Inputs (Guntur)',
+    full_name: 'Venkatesh Rao',
+    gstin: '37AABCK3456R1Z1',
+  },
+  'seller5@agrimart.in': {
+    id: 'ba4718ab-3565-4d00-88bc-afe8cb5a8d80',
+    business_name: 'Priya Bio-Organics (Nashik)',
+    full_name: 'Priya Sharma',
+    gstin: '27AABCA7890R1Z4',
   },
 };
 
@@ -59,7 +71,7 @@ export const SellerDashboard = () => {
   const matchedSeller = user?.email ? SELLER_SEED_DEFAULTS[user.email] : SELLER_SEED_DEFAULTS['seller2@agrimart.in'];
 
   const fetchSellerStats = async () => {
-    const sellerId = profile?.id || user?.id || matchedSeller?.id || 'a2222222-2222-2222-2222-222222222222';
+    const sellerId = profile?.id || user?.id || matchedSeller?.id || 'c0665a1a-a407-45e6-89ad-7ce0bad573cb';
     try {
       const [ordersRes, bargainsRes, productsRes] = await Promise.allSettled([
         api.get('/orders/seller/received'),
