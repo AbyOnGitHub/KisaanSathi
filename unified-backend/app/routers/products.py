@@ -21,6 +21,12 @@ router = APIRouter(prefix="/api/products", tags=["Products"])
 # Route: GET /api/products
 # Purpose: List active products with optional search, category filter, price range, sorting, and pagination
 @router.get(
+    "",
+    response_model=ProductListResponse,
+    status_code=status.HTTP_200_OK,
+    summary="List products with filtering and pagination",
+)
+@router.get(
     "/",
     response_model=ProductListResponse,
     status_code=status.HTTP_200_OK,

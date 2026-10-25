@@ -14,6 +14,12 @@ router = APIRouter(prefix="/api/categories", tags=["Categories"])
 # Route: GET /api/categories
 # Purpose: Fetch and return all product categories (e.g., Seeds, Fertilizers, Tools)
 @router.get(
+    "",
+    response_model=List[CategoryResponse],
+    status_code=status.HTTP_200_OK,
+    summary="List all product categories",
+)
+@router.get(
     "/",
     response_model=List[CategoryResponse],
     status_code=status.HTTP_200_OK,

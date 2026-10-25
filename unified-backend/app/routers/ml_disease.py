@@ -2,9 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from app.database import get_supabase
 from app.services.ml_service import predict_image
 
-router = APIRouter(prefix="/api/crop-disease", tags=["Crop Disease"])
+router = APIRouter(tags=["Crop Disease"])
 
-@router.post("/predict")
+@router.post("/api/crop-disease/predict")
+@router.post("/crop-disease/predict")
 def predict_disease_route(file: UploadFile = File(...)):
     """
     Endpoint to process an uploaded leaf image and return the predicted disease 

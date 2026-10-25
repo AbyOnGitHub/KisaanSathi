@@ -8,10 +8,16 @@ from app.services.crop_yield_predictor import predictor_service
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/api/crop-yield", tags=["Crop Yield Prediction"])
+router = APIRouter(tags=["Crop Yield Prediction"])
 
 @router.post(
-    "/predict",
+    "/api/crop-yield/predict",
+    response_model=CropYieldPredictionResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Predict expected crop yield based on agricultural inputs"
+)
+@router.post(
+    "/crop-yield/predict",
     response_model=CropYieldPredictionResponse,
     status_code=status.HTTP_200_OK,
     summary="Predict expected crop yield based on agricultural inputs"

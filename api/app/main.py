@@ -40,6 +40,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Path Normalization Middleware for Vercel Serverless
+@app.middleware("http")
+async def normalize_vercel_api_path(request: Request, call_next):
+    path = request.scope.get("path", "")
+    if path.startswith("/api/index.py"):
+        sub = path[len("/api/index.py"):]
+        request.scope["path"] = "/api" + sub if not sub.startswith("/api") else sub
+    elif path.startswith("/index.py"):
+        sub = path[len("/index.py"):]
+        request.scope["path"] = "/api" + sub if not sub.startswith("/api") else sub
+    elif not path.startswith("/api") and path not in ("/", "/docs", "/openapi.json", "/redoc"):
+        request.scope["path"] = "/api" + path
+    return await call_next(request)
+
 # Custom Validation Exception Handler
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
