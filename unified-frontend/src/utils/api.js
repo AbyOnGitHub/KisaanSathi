@@ -7,7 +7,21 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { supabase } from './supabaseClient';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:8000/api');
+const getApiBaseUrl = () => {
+  const envUrl = (import.meta.env.VITE_API_URL || '').trim();
+  if (
+    import.meta.env.PROD ||
+    (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1')
+  ) {
+    if (envUrl && !envUrl.includes('localhost') && envUrl.startsWith('http')) {
+      return envUrl.replace(/\/+$/, '');
+    }
+    return '/api';
+  }
+  return envUrl || 'http://localhost:8000/api';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 export const api = axios.create({
   baseURL: API_BASE_URL,

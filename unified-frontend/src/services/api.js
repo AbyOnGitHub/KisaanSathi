@@ -1,7 +1,20 @@
 // Kisan Sathi API Service
 
-const rawUrl = import.meta.env.VITE_API_URL || '';
-const API_BASE_URL = rawUrl.replace(/\/api\/?$/, '');
+const getApiBaseUrl = () => {
+  const envUrl = (import.meta.env.VITE_API_URL || '').trim();
+  if (
+    import.meta.env.PROD ||
+    (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1')
+  ) {
+    if (envUrl && !envUrl.includes('localhost') && envUrl.startsWith('http')) {
+      return envUrl.replace(/\/api\/?$/, '');
+    }
+    return '';
+  }
+  return envUrl.replace(/\/api\/?$/, '') || 'http://localhost:8000';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 /**
  * Checks whether the backend FastAPI service is running.

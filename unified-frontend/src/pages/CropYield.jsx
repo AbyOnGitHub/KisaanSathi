@@ -2,7 +2,21 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
-const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000');
+const getApiUrl = () => {
+  const envUrl = (import.meta.env.VITE_API_URL || '').trim();
+  if (
+    import.meta.env.PROD ||
+    (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1')
+  ) {
+    if (envUrl && !envUrl.includes('localhost') && envUrl.startsWith('http')) {
+      return envUrl.replace(/\/api\/?$/, '');
+    }
+    return '';
+  }
+  return envUrl.replace(/\/api\/?$/, '') || 'http://localhost:8000';
+};
+
+const API_URL = getApiUrl();
 
 const CropYield = () => {
   const [formData, setFormData] = useState({

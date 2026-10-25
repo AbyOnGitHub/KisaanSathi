@@ -53,8 +53,11 @@ export default function DiseaseDetection() {
       const formData = new FormData()
       formData.append('file', file)
 
-      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000');
-      const baseUrl = apiUrl.replace(/\/api\/?$/, '');
+      const envUrl = (import.meta.env.VITE_API_URL || '').trim();
+      const isRemoteOrProd = import.meta.env.PROD || (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1');
+      const baseUrl = isRemoteOrProd
+        ? (envUrl && !envUrl.includes('localhost') && envUrl.startsWith('http') ? envUrl.replace(/\/api\/?$/, '') : '')
+        : (envUrl.replace(/\/api\/?$/, '') || 'http://localhost:8000');
       const response = await fetch(`${baseUrl}/api/crop-disease/predict`, {
         method: 'POST',
         body: formData
