@@ -17,6 +17,22 @@ export const translations = {
     formTitle: "Enter Farm Conditions",
     sampleDataBtn: "Sample Data",
     resetBtn: "Reset",
+    cropLabel: "Select Crop",
+    cropPlaceholder: "Select a crop",
+    cropHelper: "Choose the target crop for genuine crop-specific yield estimation.",
+    cropError: "Please select a crop to predict yield.",
+    cropNames: {
+      Rice: "Rice (Paddy)",
+      Wheat: "Wheat",
+      Maize: "Maize",
+      Bajra: "Bajra (Pearl Millet)",
+      Jowar: "Jowar (Sorghum)",
+      Cotton: "Cotton",
+      Soybean: "Soybean",
+      Groundnut: "Groundnut",
+      Chickpea: "Chickpea (Gram)",
+      Mustard: "Mustard",
+    },
     rainfallLabel: "Rainfall",
     rainfallUnit: "mm",
     rainfallPlaceholder: "e.g. 1200",
@@ -61,6 +77,8 @@ export const translations = {
     resultUnit: "Q/acre",
     resultExplanation: (yieldVal) =>
       `Based on the conditions you provided, the estimated crop yield is approximately ${yieldVal} quintals per acre.`,
+    cropSelectedResult: (cropName, yieldVal) =>
+      `Based on the conditions you provided, the estimated harvest yield for ${cropName} is approximately ${yieldVal} quintals per acre.`,
     conditionsEvaluated: "Conditions Evaluated:",
     disclaimer:
       "Note: This is a machine-learning based estimate. Actual yield may vary depending on crop variety, soil conditions, weather, irrigation, pests and other field conditions.",
@@ -105,6 +123,22 @@ export const translations = {
     formTitle: "खेत की स्थिति दर्ज करें",
     sampleDataBtn: "नमूना डेटा",
     resetBtn: "रीसेट",
+    cropLabel: "फसल चुनें (Select Crop)",
+    cropPlaceholder: "कृपया एक फसल चुनें",
+    cropHelper: "सटीक फसल-विशिष्ट उत्पादन अनुमान के लिए फसल चुनें।",
+    cropError: "कृपया उपज अनुमान के लिए एक फसल चुनें।",
+    cropNames: {
+      Rice: "धान / चावल (Rice/Paddy)",
+      Wheat: "गेहूं (Wheat)",
+      Maize: "मक्का (Maize)",
+      Bajra: "बाजरा (Bajra/Pearl Millet)",
+      Jowar: "ज्वार (Jowar/Sorghum)",
+      Cotton: "कपास (Cotton)",
+      Soybean: "सोयाबीन (Soybean)",
+      Groundnut: "मूंगफली (Groundnut)",
+      Chickpea: "चना (Chickpea/Gram)",
+      Mustard: "सरसों (Mustard)",
+    },
     rainfallLabel: "वर्षा (Rainfall)",
     rainfallUnit: "मिमी (mm)",
     rainfallPlaceholder: "उदा. 1200",
@@ -149,6 +183,8 @@ export const translations = {
     resultUnit: "क्विंटल/एकड़",
     resultExplanation: (yieldVal) =>
       `आपके द्वारा दी गई स्थितियों के आधार पर, अनुमानित फसल उत्पादन लगभग ${yieldVal} क्विंटल प्रति एकड़ है।`,
+    cropSelectedResult: (cropName, yieldVal) =>
+      `दी गई स्थितियों के आधार पर, ${cropName} के लिए अनुमानित फसल उत्पादन लगभग ${yieldVal} क्विंटल प्रति एकड़ है।`,
     conditionsEvaluated: "मूल्यांकन की गई स्थितियाँ:",
     disclaimer:
       "नोट: यह मशीन लर्निंग पर आधारित अनुमान है। फसल की किस्म, मिट्टी की स्थिति, मौसम, सिंचाई, कीट और अन्य क्षेत्रीय परिस्थितियों के आधार पर वास्तविक उपज भिन्न हो सकती है।",
@@ -193,6 +229,22 @@ export const translations = {
     formTitle: "शेताची माहिती प्रविष्ट करा",
     sampleDataBtn: "नमुना डेटा",
     resetBtn: "रीसेट",
+    cropLabel: "पीक निवडा (Select Crop)",
+    cropPlaceholder: "कृपया एक पीक निवडा",
+    cropHelper: "अचूक पीक-विशिष्ट उत्पादन अंदाजासाठी तुमचे पीक निवडा.",
+    cropError: "कृपया उत्पादन अंदाजासाठी पीक निवडा.",
+    cropNames: {
+      Rice: "भात / धान (Rice/Paddy)",
+      Wheat: "गहू (Wheat)",
+      Maize: "मका (Maize)",
+      Bajra: "बाजरी (Bajra)",
+      Jowar: "ज्वारी (Jowar)",
+      Cotton: "कापूस (Cotton)",
+      Soybean: "सोयाबीन (Soybean)",
+      Groundnut: "भुईमूग (Groundnut)",
+      Chickpea: "हरभरा / चणा (Gram/Chickpea)",
+      Mustard: "मोहरी (Mustard)",
+    },
     rainfallLabel: "पाऊस (Rainfall)",
     rainfallUnit: "मिमी (mm)",
     rainfallPlaceholder: "उदा. 1200",
@@ -237,6 +289,8 @@ export const translations = {
     resultUnit: "क्विंटल/एकर",
     resultExplanation: (yieldVal) =>
       `तुम्ही दिलेल्या माहितीनुसार, अंदाजे पीक उत्पादन सुमारे ${yieldVal} क्विंटल प्रति एकर आहे.`,
+    cropSelectedResult: (cropName, yieldVal) =>
+      `दिलेल्या माहितीच्या आधारे, ${cropName} पिकासाठी अंदाजे उत्पादन सुमारे ${yieldVal} क्विंटल प्रति एकर आहे.`,
     conditionsEvaluated: "तपासलेली माहिती:",
     disclaimer:
       "टीप: हा मशीन लर्निंगवर आधारित अंदाज आहे. पिकाची जात, जमिनीची स्थिती, हवामान, सिंचन, कीड आणि शेतातील इतर परिस्थितीनुसार प्रत्यक्ष उत्पादन बदलू शकते.",
@@ -264,3 +318,4 @@ export const translations = {
       "कॉलेज मिनी-प्रोजेक्ट | शेतकऱ्यांना डेटा-आधारित शेती सहाय्य देण्यासाठी समर्पित.",
   },
 };
+
