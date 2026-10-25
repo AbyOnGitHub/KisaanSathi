@@ -25,6 +25,13 @@ async def lifespan(app: FastAPI):
         logger.info("Crop Yield model loaded.")
     except Exception as e:
         logger.warning(f"Failed to load crop yield model: {e}")
+
+    try:
+        from app.services.ml_service import load_disease_model
+        load_disease_model()
+        logger.info("Crop Disease ResNet50 model loaded.")
+    except Exception as e:
+        logger.warning(f"Failed to load crop disease model: {e}")
     
     yield
     logger.info("Shutting down KisaanSathi Unified API...")
