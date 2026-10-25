@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 
-const rawUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const rawUrl = import.meta.env.VITE_SUPABASE_URL || 'https://pxzikfwejlncbwcrsujv.supabase.co';
 const supabaseUrl = rawUrl.replace(/\/+$/, '');
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4emlrZndlamxuY2J3Y3JzdWp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3NDc1NzQsImV4cCI6MjEwNTMyMzU3NH0.ltZjZ5KjEVS02VVP_KxENB0QB4XymnC5WGcU8XteJYs';
 
 // Detect if real Supabase credentials are provided
 export const isSupabaseConfigured = Boolean(
