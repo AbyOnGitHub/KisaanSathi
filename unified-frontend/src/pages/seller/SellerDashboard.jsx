@@ -25,7 +25,7 @@ import api from '../../utils/api';
 
 export const SellerDashboard = () => {
   const { t } = useTranslation();
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
   const [activeTab, setActiveTab] = useState('products'); // 'dashboard', 'products', 'orders', 'bargains'
   const [addProductModalOpen, setAddProductModalOpen] = useState(false);
   const [stats, setStats] = useState({
@@ -36,11 +36,12 @@ export const SellerDashboard = () => {
   });
 
   const fetchSellerStats = async () => {
+    const sellerId = profile?.id || user?.id;
     try {
       const [ordersRes, bargainsRes, productsRes] = await Promise.allSettled([
         api.get('/orders/seller/received'),
         api.get('/bargain/seller/pending'),
-        profile?.id ? api.get(`/products/seller/${profile.id}`) : Promise.resolve({ data: [] }),
+        sellerId ? api.get(`/products/seller/${sellerId}`) : Promise.resolve({ data: [] }),
       ]);
 
       const orders = ordersRes.status === 'fulfilled' ? ordersRes.value.data?.data || [] : [];
@@ -62,7 +63,8 @@ export const SellerDashboard = () => {
 
   useEffect(() => {
     fetchSellerStats();
-  }, [profile]);
+  }, [profile, user]);
+
 
   const sidebarLinks = [
     { id: 'dashboard', label: t('seller.tab_overview'), icon: <LayoutDashboard className="w-4 h-4" /> },

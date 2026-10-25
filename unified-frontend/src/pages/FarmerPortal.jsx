@@ -24,7 +24,10 @@ import {
   Check,
   Search,
   SlidersHorizontal,
-  Compass
+  Compass,
+  Store,
+  ArrowRight,
+  Package
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useFarmer } from '../context/FarmerContext';
@@ -36,6 +39,9 @@ export default function FarmerPortal() {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
   const { farmer, updateFarmer } = useFarmer();
+
+  const isSeller = profile?.role === 'seller' || user?.role === 'seller' || user?.user_metadata?.role === 'seller' || user?.email?.includes('seller');
+
 
   const [language, setLanguage] = useState(() => {
     return localStorage.getItem('kisaansathi_lang') || 'en';
@@ -383,13 +389,18 @@ export default function FarmerPortal() {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-oswald font-bold text-gray-900 leading-tight">
-                  {formData.name || 'Farmer Profile'}
+                  {formData.name || (isSeller ? 'Seller Profile' : 'Farmer Profile')}
                 </h1>
-                <span className="px-2 py-0.5 text-[10px] font-bold bg-green-100 text-green-800 rounded-full border border-green-200 uppercase tracking-wider">
-                  Verified Farmer
+                <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full border uppercase tracking-wider ${
+                  isSeller
+                    ? 'bg-yellow-100 text-yellow-900 border-yellow-300'
+                    : 'bg-green-100 text-green-800 border-green-200'
+                }`}>
+                  {isSeller ? 'Verified Seller' : 'Verified Farmer'}
                 </span>
               </div>
               <p className="text-xs text-gray-500 font-work-sans">
+                {isSeller && profile?.business_name ? `${profile.business_name} • ` : ''}
                 {formData.village}, {formData.taluka}, {formData.district}, {formData.state}
               </p>
             </div>
@@ -398,6 +409,17 @@ export default function FarmerPortal() {
 
         {/* Right Action Bar */}
         <div className="flex items-center gap-3 self-end md:self-center">
+          {/* Seller Dashboard Quick Link if Seller */}
+          {isSeller && (
+            <Link
+              to="/seller"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-950 bg-amber-100 hover:bg-amber-200 px-3 py-2 rounded-xl border border-amber-300 transition-colors shadow-xs"
+            >
+              <Store size={15} />
+              <span>Seller Products Dashboard</span>
+            </Link>
+          )}
+
           {/* Language Switcher */}
           <div className="flex items-center gap-1.5 bg-gray-50 p-1 rounded-xl border border-gray-200">
             <Globe size={15} className="text-gray-400 ml-1.5" />
@@ -449,6 +471,39 @@ export default function FarmerPortal() {
           </div>
         </div>
       </div>
+
+      {/* Top Seller Notification Banner when Seller is on Dashboard */}
+      {isSeller && (
+        <div className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-300 text-gray-950 p-4 sm:p-5 rounded-2xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-work-sans border border-amber-300">
+          <div className="flex items-center gap-3.5">
+            <div className="p-2.5 bg-gray-950 text-yellow-300 rounded-xl shadow-xs">
+              <Store size={22} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-oswald font-bold text-base text-gray-950 tracking-wide uppercase">
+                  Seller Central Active: {profile?.business_name || formData.name || 'Verified Dealer'}
+                </span>
+                <span className="bg-gray-950 text-yellow-300 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                  Dealer Portal
+                </span>
+              </div>
+              <p className="text-xs text-gray-900 font-medium mt-0.5">
+                You are logged in as a registered agricultural dealer ({formData.email || user?.email}). View and manage your listed products, stock inventory, received orders, and buyer bargains in Seller Central.
+              </p>
+            </div>
+          </div>
+
+          <Link
+            to="/seller"
+            className="inline-flex items-center gap-2 bg-gray-950 hover:bg-black text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md transition-all shrink-0"
+          >
+            <span>View My Products & Dashboard</span>
+            <ArrowRight size={15} />
+          </Link>
+        </div>
+      )}
+
 
       {/* Main Tab 1: Profile & Demographics Management */}
       {activeTab === 'profile' && (
@@ -1144,6 +1199,7 @@ export default function FarmerPortal() {
                           <span>{expl.slice(2)}</span>
                         </li>
                       ))}
+                    </ul>
                   </div>
 
                   {/* Required Documents Pills */}

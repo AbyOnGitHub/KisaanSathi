@@ -8,7 +8,8 @@ import { Toaster } from 'react-hot-toast';
 
 // Layout Component
 const Layout = ({ children }) => {
-  const { user, logout } = useAuth();
+  const { user, profile, logout } = useAuth();
+  const isSeller = profile?.role === 'seller' || user?.role === 'seller' || user?.user_metadata?.role === 'seller' || user?.email?.includes('seller');
   
   return (
     <div className="min-h-screen flex flex-col font-work-sans">
@@ -18,18 +19,37 @@ const Layout = ({ children }) => {
             <img src="/logo.jpg" alt="Kisan Sathi" className="h-10 w-10 object-contain rounded-full shadow-sm" />
             Kisan Sathi
           </Link>
-          <nav className="hidden md:flex space-x-6 font-medium">
+          <nav className="hidden md:flex space-x-6 font-medium items-center">
             <Link to="/marketplace" className="hover:text-green-200 transition-colors">Marketplace</Link>
             <Link to="/schemes" className="hover:text-green-200 transition-colors">Schemes</Link>
             <Link to="/disease-detection" className="hover:text-green-200 transition-colors">Crop Disease</Link>
             <Link to="/yield-prediction" className="hover:text-green-200 transition-colors">Yield Prediction</Link>
             <Link to="/bargains" className="hover:text-green-200 transition-colors">Bargains</Link>
+            {isSeller && (
+              <Link
+                to="/seller"
+                className="text-yellow-300 font-bold hover:text-yellow-100 transition-colors flex items-center gap-1.5 bg-green-800/90 px-3 py-1 rounded-lg border border-yellow-400/40 shadow-xs"
+              >
+                <span>📦 Seller Products</span>
+              </Link>
+            )}
           </nav>
           <div className="flex items-center space-x-4">
             <Link to="/cart" className="hover:text-green-200">🛒</Link>
             {user ? (
               <div className="flex items-center space-x-3">
-                <Link to="/dashboard" className="hover:underline">{user.full_name || user.email}</Link>
+                <Link
+                  to={isSeller ? "/seller" : "/dashboard"}
+                  className="hover:underline flex items-center gap-1.5"
+                  title={isSeller ? "Go to Seller Products Dashboard" : "Go to Farmer Profile"}
+                >
+                  {isSeller && (
+                    <span className="bg-yellow-400 text-gray-950 text-[10px] font-black px-1.5 py-0.5 rounded uppercase">
+                      Seller
+                    </span>
+                  )}
+                  <span>{user.full_name || profile?.business_name || user.email}</span>
+                </Link>
                 <button onClick={logout} className="text-sm bg-green-800 px-3 py-1 rounded hover:bg-green-900 transition-colors">Logout</button>
               </div>
             ) : (
@@ -47,6 +67,7 @@ const Layout = ({ children }) => {
     </div>
   );
 };
+
 
 // Lazy Loaded Pages
 const LandingPage = lazy(() => import('./pages/LandingPage'));

@@ -73,17 +73,18 @@ def list_products(
     status_code=status.HTTP_200_OK,
     summary="Get all products for a specific seller",
 )
-def get_products_by_seller(seller_id: str):
+def get_products_by_seller(seller_id: str, only_active: bool = False):
     """
-    Retrieves all active product listings belonging to the given seller ID.
+    Retrieves all product listings belonging to the given seller ID.
     """
     result = SupabaseService.fetch_products(
         seller_id=seller_id,
         page=1,
         limit=100,
-        only_active=True,
+        only_active=only_active,
     )
     return result["data"]
+
 
 
 # Route: GET /api/products/{product_id}

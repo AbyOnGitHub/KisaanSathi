@@ -17,17 +17,18 @@ import api from '../../utils/api';
 
 export const SellerProducts = ({ onOpenAddModal, onProductsChanged }) => {
   const { t } = useTranslation();
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [editingProduct, setEditingProduct] = useState(null);
   const [sellerProducts, setSellerProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchSellerProducts = async () => {
-    if (!profile?.id) return;
+    const sellerId = profile?.id || user?.id;
+    if (!sellerId) return;
     setLoading(true);
     try {
-      const res = await api.get(`/products/seller/${profile.id}`);
+      const res = await api.get(`/products/seller/${sellerId}`);
       if (Array.isArray(res.data)) {
         setSellerProducts(res.data);
       } else if (res.data?.data) {
@@ -45,7 +46,8 @@ export const SellerProducts = ({ onOpenAddModal, onProductsChanged }) => {
 
   useEffect(() => {
     fetchSellerProducts();
-  }, [profile]);
+  }, [profile, user]);
+
 
   const handleDeleteProduct = async (prodId) => {
     if (!window.confirm(t('seller.confirm_delete'))) return;
