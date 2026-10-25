@@ -99,6 +99,7 @@ app.include_router(ml_disease.router)
 
 # Schemes Routes
 app.include_router(schemes.router)
+app.include_router(schemes.router, prefix="")
 
 # Health Check Route
 app.include_router(health.router)
