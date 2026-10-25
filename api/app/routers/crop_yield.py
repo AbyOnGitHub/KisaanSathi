@@ -3,12 +3,29 @@ from fastapi import APIRouter, HTTPException, status
 from app.schemas.crop_yield import (
     CropYieldPredictionRequest,
     CropYieldPredictionResponse,
+    SUPPORTED_CROPS,
 )
 from app.services.crop_yield_predictor import predictor_service
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["Crop Yield Prediction"])
+
+@router.get(
+    "/api/crop-yield/crops",
+    summary="Get list of supported crops for yield estimation"
+)
+@router.get(
+    "/crop-yield/crops",
+    summary="Get list of supported crops for yield estimation"
+)
+def get_supported_crops():
+    """Returns list of crops genuinely supported by the crop-aware prediction model."""
+    return {
+        "success": True,
+        "crops": SUPPORTED_CROPS,
+        "count": len(SUPPORTED_CROPS)
+    }
 
 @router.post(
     "/api/crop-yield/predict",
@@ -24,16 +41,22 @@ router = APIRouter(tags=["Crop Yield Prediction"])
 )
 def predict_crop_yield(request: CropYieldPredictionRequest):
     """
-    Accepts agricultural parameters from the farmer and predicts expected crop yield
-    in quintals per acre (Q/acre) using the pre-trained Gradient Boosting regression model.
+    Accepts agricultural parameters and selected crop identity from the farmer and predicts
+    expected crop yield in quintals per acre (Q/acre) using the crop-aware Gradient Boosting pipeline.
     """
     try:
         predicted_yield = predictor_service.predict(request)
+        if request.crop:
+            msg = f"Based on the provided conditions, the estimated yield for {request.crop} is approximately {predicted_yield:.2f} quintals per acre."
+        else:
+            msg = f"Based on the provided conditions, the estimated crop yield is approximately {predicted_yield:.2f} quintals per acre."
+
         return CropYieldPredictionResponse(
             success=True,
+            crop=request.crop,
             predicted_yield=predicted_yield,
             unit="Q/acre",
-            message=f"Based on the provided conditions, the estimated crop yield is approximately {predicted_yield:.2f} quintals per acre.",
+            message=msg,
             inputs=request.model_dump()
         )
     except FileNotFoundError as e:
