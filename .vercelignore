@@ -1,6 +1,7 @@
 # Ignore legacy microservices directories
 backend/
 frontend/
+unified-backend/
 
 # Ignore virtual environments and node modules
 .venv/
