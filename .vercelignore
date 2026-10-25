@@ -28,9 +28,7 @@ test_api.json
 KisaanSathi-SRS-Document.md
 HANDOFF.md
 
-# Ignore git and local caches
-.git/
-.github/
+# Ignore local caches and IDEs
 .vscode/
 .idea/
 **/__pycache__/
