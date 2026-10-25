@@ -1,7 +1,8 @@
 from fastapi import APIRouter
 from typing import List
 from app.models.schemas import FarmerProfileInput, SchemeRecommendationOutput, MatchedRule
-from app.services.rule_engine import evaluate_rules
+from app.services.scheme_ml_recommender import ml_recommender
+
 
 router = APIRouter(
     prefix="/api/recommendations",
@@ -226,14 +227,17 @@ def get_recommendations(profile: FarmerProfileInput):
     additional = farmer_data.pop("additional_data", {})
     farmer_data.update(additional)
 
+    # 1. Feature Vector Extraction
+    features = ml_recommender.extract_features(farmer_data)
     recommendations = []
 
+    # 2. Decision Tree Classifier Inference across Scheme Catalog
     for scheme in SCHEME_CATALOG:
-        evaluation = evaluate_rules(farmer_data, scheme)
+        prediction = ml_recommender.predict_scheme_eligibility(features, scheme)
 
-        if evaluation["match_status"] in ["Eligible", "Partial Match"]:
-            matched_models = [MatchedRule(**r) for r in evaluation["matched_rules"]]
-            unmatched_models = [MatchedRule(**r) for r in evaluation.get("unmatched_rules", [])]
+        if prediction["match_status"] in ["Eligible", "Partial Match"]:
+            matched_models = [MatchedRule(**r) for r in prediction["matched_rules"]]
+            unmatched_models = [MatchedRule(**r) for r in prediction.get("unmatched_rules", [])]
 
             recommendations.append(
                 SchemeRecommendationOutput(
@@ -242,11 +246,13 @@ def get_recommendations(profile: FarmerProfileInput):
                     level=scheme.get("level", "central"),
                     category=scheme.get("category", "financial"),
                     benefit=scheme.get("benefit", ""),
-                    match_status=evaluation["match_status"],
-                    match_score=evaluation["match_score"],
+                    match_status=prediction["match_status"],
+                    match_score=prediction["match_score"],
+                    confidence_score=prediction["confidence_score"],
+                    model_name=prediction["model_name"],
                     matched_rules=matched_models,
                     unmatched_rules=unmatched_models,
-                    explanations=evaluation.get("explanations", []),
+                    explanations=prediction.get("explanations", []),
                     source_name=scheme.get("source_name", ""),
                     source_url=scheme.get("source_url", ""),
                     documents=scheme.get("documents", []),
@@ -254,7 +260,8 @@ def get_recommendations(profile: FarmerProfileInput):
                 )
             )
 
-    # Sort recommendations by match_score descending
-    recommendations.sort(key=lambda x: x.match_score, reverse=True)
+    # Sort recommendations by match_score & confidence_score descending
+    recommendations.sort(key=lambda x: (x.match_score, x.confidence_score), reverse=True)
     return recommendations
+
 

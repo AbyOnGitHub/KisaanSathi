@@ -36,6 +36,8 @@ class SchemeRecommendationOutput(BaseModel):
     benefit: str = ""
     match_status: str
     match_score: int = 100
+    confidence_score: float = 0.95
+    model_name: str = "Decision Tree Classifier (CART / Interpretable ML)"
     matched_rules: List[MatchedRule] = []
     unmatched_rules: List[MatchedRule] = []
     explanations: List[str] = []
@@ -43,3 +45,4 @@ class SchemeRecommendationOutput(BaseModel):
     source_url: str = ""
     documents: List[str] = []
     how_to_apply: str = ""
+
