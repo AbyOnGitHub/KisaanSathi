@@ -61,6 +61,8 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 # Include Routers
 app.include_router(auth.router)
+app.include_router(auth.router, prefix="/api/auth")
+app.include_router(auth.router, prefix="/api")
 # Assuming marketplace routers were named properly, we will fix them next
 app.include_router(categories.router)
 app.include_router(products.router)
