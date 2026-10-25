@@ -1,0 +1,98 @@
+/**
+ * Circular Category shortcuts section on Home page.
+ * Fetches real categories from FastAPI GET /categories/.
+ */
+
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import api from '../../utils/api';
+
+import { Sprout, FlaskConical, ShieldAlert, Wrench, Droplets, Leaf, Tractor, Wheat } from 'lucide-react';
+
+const DEFAULT_CATEGORY_METADATA = {
+  seeds: { icon: Sprout, bg: 'bg-green-100', border: 'border-green-200', color: 'text-green-700' },
+  fertilizers: { icon: FlaskConical, bg: 'bg-blue-100', border: 'border-blue-200', color: 'text-blue-700' },
+  pesticides: { icon: ShieldAlert, bg: 'bg-red-100', border: 'border-red-200', color: 'text-red-700' },
+  tools: { icon: Wrench, bg: 'bg-amber-100', border: 'border-amber-200', color: 'text-amber-700' },
+  irrigation: { icon: Droplets, bg: 'bg-cyan-100', border: 'border-cyan-200', color: 'text-cyan-700' },
+  organic: { icon: Leaf, bg: 'bg-emerald-100', border: 'border-emerald-200', color: 'text-emerald-700' },
+  machinery: { icon: Tractor, bg: 'bg-slate-100', border: 'border-slate-200', color: 'text-slate-700' },
+};
+
+export const CategoryTiles = () => {
+  const { t } = useTranslation();
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await api.get('/categories/');
+        if (res.data && res.data.length > 0) {
+          setCategories(res.data);
+        } else {
+          // Fallback standard list
+          setCategories([
+            { id: 'seeds', slug: 'seeds', name: 'Seeds' },
+            { id: 'fertilizers', slug: 'fertilizers', name: 'Fertilizers' },
+            { id: 'pesticides', slug: 'pesticides', name: 'Pesticides' },
+            { id: 'tools', slug: 'tools', name: 'Tools' },
+            { id: 'irrigation', slug: 'irrigation', name: 'Irrigation' },
+          ]);
+        }
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  if (!categories || categories.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="bg-white rounded-xl border border-agri-border p-5 my-6 shadow-xs">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-base sm:text-lg font-bold text-gray-900">
+          {t('home.shop_by_category')}
+        </h3>
+        <Link to="/products" className="text-xs font-bold text-agri-primary hover:underline">
+          {t('home.view_all_categories')}
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3 sm:gap-4 text-center">
+        {categories.map((cat) => {
+          const meta = DEFAULT_CATEGORY_METADATA[cat.slug || cat.id] || {
+            icon: Wheat,
+            bg: 'bg-green-100',
+            border: 'border-green-200',
+            color: 'text-green-700',
+          };
+          const IconComponent = meta.icon;
+
+          return (
+            <Link
+              key={cat.id || cat.slug}
+              to={`/products?category=${cat.slug || cat.id}`}
+              className="group flex flex-col items-center p-2 rounded-lg hover:bg-gray-50 transition"
+            >
+              <div
+                className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center ${meta.bg} border ${meta.border} shadow-2xs group-hover:scale-110 transition-transform duration-200`}
+              >
+                <IconComponent className={`w-7 h-7 sm:w-8 sm:h-8 ${meta.color}`} strokeWidth={2} />
+              </div>
+              <span className="text-xs font-semibold text-gray-800 mt-2 group-hover:text-agri-primary leading-tight truncate max-w-full">
+                {cat.name}
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+export default CategoryTiles;

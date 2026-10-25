@@ -1,0 +1,37 @@
+# Ignore legacy microservices directories
+backend/
+frontend/
+
+# Ignore virtual environments and node modules
+.venv/
+venv/
+**/venv/
+**/.venv/
+**/node_modules/
+
+# Ignore notebooks, test scripts, and datasets
+**/*.ipynb
+**/*.csv
+**/*.bat
+**/seed_api.py
+**/test_*.py
+**/create_*.py
+**/signin_user.py
+**/signup_user.py
+**/inject_demo_users.py
+**/check_profiles.py
+**/inspect_tflite.py
+merge_*.py
+test_api.json
+
+# Documentation
+KisaanSathi-SRS-Document.md
+HANDOFF.md
+
+# Ignore git and local caches
+.git/
+.github/
+.vscode/
+.idea/
+**/__pycache__/
+*.py[cod]

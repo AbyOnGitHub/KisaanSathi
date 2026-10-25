@@ -1,0 +1,14 @@
+{
+  "name": "kisaansathi-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "KisaanSathi Fullstack Agricultural Platform Monorepo",
+  "workspaces": [
+    "unified-frontend"
+  ],
+  "scripts": {
+    "build": "npm --prefix unified-frontend run build",
+    "dev": "npm --prefix unified-frontend run dev",
+    "lint": "npm --prefix unified-frontend run lint"
+  }
+}
