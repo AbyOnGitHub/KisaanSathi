@@ -25,14 +25,6 @@ const Layout = ({ children }) => {
             <Link to="/disease-detection" className="hover:text-green-200 transition-colors">Crop Disease</Link>
             <Link to="/yield-prediction" className="hover:text-green-200 transition-colors">Yield Prediction</Link>
             <Link to="/bargains" className="hover:text-green-200 transition-colors">Bargains</Link>
-            {isSeller && (
-              <Link
-                to="/seller"
-                className="text-yellow-300 font-bold hover:text-yellow-100 transition-colors flex items-center gap-1.5 bg-green-800/90 px-3 py-1 rounded-lg border border-yellow-400/40 shadow-xs"
-              >
-                <span>📦 Seller Products</span>
-              </Link>
-            )}
           </nav>
           <div className="flex items-center space-x-4">
             <Link to="/cart" className="hover:text-green-200">🛒</Link>
