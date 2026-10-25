@@ -25,9 +25,31 @@ export async function checkBackendHealth() {
 }
 
 /**
+ * Fetches the list of supported crops from the backend.
+ */
+export async function fetchSupportedCrops() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/crop-yield/crops`, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' },
+    });
+    if (!response.ok) {
+      return { ok: false, error: 'Failed to fetch supported crops.' };
+    }
+    const data = await response.json();
+    return { ok: true, crops: data.crops };
+  } catch (error) {
+    return {
+      ok: false,
+      error: 'Unable to connect to crop list service.'
+    };
+  }
+}
+
+/**
  * Sends farmer input to the FastAPI crop yield prediction endpoint.
  *
- * @param {Object} inputData - { rainfall, fertilizer, temperature, nitrogen, phosphorus, potassium }
+ * @param {Object} inputData - { crop, rainfall, fertilizer, temperature, nitrogen, phosphorus, potassium }
  * @returns {Promise<Object>} - { success: true, data } or { success: false, error: string }
  */
 export async function predictCropYield(inputData) {
@@ -40,6 +62,10 @@ export async function predictCropYield(inputData) {
       phosphorus: parseFloat(inputData.phosphorus),
       potassium: parseFloat(inputData.potassium),
     };
+
+    if (inputData.crop && typeof inputData.crop === 'string' && inputData.crop.trim() !== '') {
+      payload.crop = inputData.crop.trim();
+    }
 
     const response = await fetch(`${API_BASE_URL}/api/crop-yield/predict`, {
       method: 'POST',
@@ -68,3 +94,4 @@ export async function predictCropYield(inputData) {
     };
   }
 }
+

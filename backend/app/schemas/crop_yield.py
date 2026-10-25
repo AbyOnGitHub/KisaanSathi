@@ -1,7 +1,53 @@
-from pydantic import BaseModel, Field
-from typing import Dict, Any
+from pydantic import BaseModel, Field, field_validator
+from pydantic_core import PydanticCustomError
+from typing import Dict, Any, Optional, List
+
+SUPPORTED_CROPS = [
+    "Rice",
+    "Wheat",
+    "Maize",
+    "Bajra",
+    "Jowar",
+    "Cotton",
+    "Soybean",
+    "Groundnut",
+    "Chickpea",
+    "Mustard",
+]
+
+# Normalization mapping for farmer inputs, common variations and regional names
+CROP_ALIASES: Dict[str, str] = {
+    "rice": "Rice",
+    "rice (paddy)": "Rice",
+    "paddy": "Rice",
+    "wheat": "Wheat",
+    "maize": "Maize",
+    "corn": "Maize",
+    "bajra": "Bajra",
+    "bajra (pearl millet)": "Bajra",
+    "pearl millet": "Bajra",
+    "jowar": "Jowar",
+    "jowar (sorghum)": "Jowar",
+    "sorghum": "Jowar",
+    "cotton": "Cotton",
+    "soybean": "Soybean",
+    "soya": "Soybean",
+    "groundnut": "Groundnut",
+    "peanut": "Groundnut",
+    "chickpea": "Chickpea",
+    "chickpea (gram)": "Chickpea",
+    "gram": "Chickpea",
+    "chana": "Chickpea",
+    "mustard": "Mustard",
+    "sarson": "Mustard",
+}
 
 class CropYieldPredictionRequest(BaseModel):
+    crop: Optional[str] = Field(
+        default=None,
+        description="Selected crop name for estimation (e.g. 'Wheat', 'Rice', 'Maize', 'Bajra', 'Jowar', 'Cotton', 'Soybean', 'Groundnut', 'Chickpea', 'Mustard')",
+        examples=["Wheat"]
+    )
     rainfall: float = Field(
         ...,
         ge=100.0,
@@ -45,9 +91,29 @@ class CropYieldPredictionRequest(BaseModel):
         examples=[20.0]
     )
 
+    @field_validator("crop", mode="before")
+    @classmethod
+    def validate_crop(cls, v):
+        if v is None:
+            return None
+        v_str = str(v).strip()
+        if not v_str:
+            return None
+        canonical = CROP_ALIASES.get(v_str.lower())
+        if canonical is None:
+            supported_list = ", ".join(SUPPORTED_CROPS)
+            raise PydanticCustomError(
+                "value_error",
+                f"Unsupported crop '{v_str}'. Genuinely supported crops are: {supported_list}.",
+                {"crop": v_str, "supported": supported_list}
+            )
+        return canonical
+
+
     model_config = {
         "json_schema_extra": {
             "example": {
+                "crop": "Wheat",
                 "rainfall": 1200.0,
                 "fertilizer": 80.0,
                 "temperature": 28.0,
@@ -60,6 +126,10 @@ class CropYieldPredictionRequest(BaseModel):
 
 class CropYieldPredictionResponse(BaseModel):
     success: bool = True
+    crop: Optional[str] = Field(
+        default=None,
+        description="Crop name for which yield is estimated"
+    )
     predicted_yield: float = Field(
         ...,
         description="Estimated crop yield in quintals per acre (Q/acre)"
@@ -76,3 +146,4 @@ class CropYieldPredictionResponse(BaseModel):
         default_factory=dict,
         description="Echo of input parameters used for prediction"
     )
+
