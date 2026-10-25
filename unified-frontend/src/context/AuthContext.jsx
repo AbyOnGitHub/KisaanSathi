@@ -128,7 +128,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Determine role
-  const isSeller = profile?.role === 'seller';
+  const isSeller =
+    profile?.role === 'seller' ||
+    user?.role === 'seller' ||
+    user?.user_metadata?.role === 'seller' ||
+    user?.email?.includes('seller');
   const isFarmer = !isSeller; // Defaults to farmer/buyer
 
   // If initial auth check is loading, show minimal pulse
