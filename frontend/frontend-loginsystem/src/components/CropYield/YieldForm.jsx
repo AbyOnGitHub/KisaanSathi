@@ -1,8 +1,22 @@
 import React, { useState } from 'react';
 import { Sparkles, RotateCcw } from 'lucide-react';
 
+const SUPPORTED_CROPS = [
+  { id: 'Rice', defaultLabel: 'Rice (Paddy)' },
+  { id: 'Wheat', defaultLabel: 'Wheat' },
+  { id: 'Maize', defaultLabel: 'Maize' },
+  { id: 'Bajra', defaultLabel: 'Bajra (Pearl Millet)' },
+  { id: 'Jowar', defaultLabel: 'Jowar (Sorghum)' },
+  { id: 'Cotton', defaultLabel: 'Cotton' },
+  { id: 'Soybean', defaultLabel: 'Soybean' },
+  { id: 'Groundnut', defaultLabel: 'Groundnut' },
+  { id: 'Chickpea', defaultLabel: 'Chickpea (Gram)' },
+  { id: 'Mustard', defaultLabel: 'Mustard' },
+];
+
 export default function YieldForm({ onSubmit, isLoading, t }) {
   const [formData, setFormData] = useState({
+    crop: '',
     rainfall: '',
     fertilizer: '',
     temperature: '',
@@ -14,12 +28,13 @@ export default function YieldForm({ onSubmit, isLoading, t }) {
   const [errors, setErrors] = useState({});
 
   const sampleData = {
-    rainfall: '1200',
-    fertilizer: '80',
-    temperature: '28',
-    nitrogen: '80',
-    phosphorus: '24',
-    potassium: '20',
+    crop: 'Wheat',
+    rainfall: '450',
+    fertilizer: '100',
+    temperature: '20',
+    nitrogen: '110',
+    phosphorus: '45',
+    potassium: '35',
   };
 
   const handleChange = (e) => {
@@ -32,6 +47,10 @@ export default function YieldForm({ onSubmit, isLoading, t }) {
 
   const validate = () => {
     const newErrors = {};
+
+    if (!formData.crop || formData.crop.trim() === '') {
+      newErrors.crop = t?.cropError || 'Please select a crop to predict yield.';
+    }
 
     const rf = parseFloat(formData.rainfall);
     if (!formData.rainfall || isNaN(rf)) {
@@ -93,6 +112,7 @@ export default function YieldForm({ onSubmit, isLoading, t }) {
 
   const handleReset = () => {
     setFormData({
+      crop: '',
       rainfall: '',
       fertilizer: '',
       temperature: '',
@@ -135,9 +155,42 @@ export default function YieldForm({ onSubmit, isLoading, t }) {
 
       <form onSubmit={handleSubmit}>
         <div className="form-grid">
+          {/* Select Crop */}
+          <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+            <label className="form-label" htmlFor="crop">
+              <span style={{ fontWeight: 600 }}>{t?.cropLabel || 'Select Crop'}</span>
+              <span style={{ color: 'var(--danger, #e03131)', marginLeft: '0.25rem' }}>*</span>
+            </label>
+            <select
+              id="crop"
+              name="crop"
+              className={`form-input ${errors.crop ? 'input-error' : ''}`}
+              value={formData.crop}
+              onChange={handleChange}
+              disabled={isLoading}
+              style={{
+                backgroundColor: '#ffffff',
+                cursor: 'pointer',
+                fontWeight: formData.crop ? 600 : 400
+              }}
+            >
+              <option value="">{`-- ${t?.cropPlaceholder || 'Select a crop'} --`}</option>
+              {SUPPORTED_CROPS.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {t?.cropNames?.[c.id] || c.defaultLabel}
+                </option>
+              ))}
+            </select>
+            <span className="form-helper">
+              {t?.cropHelper || 'Choose the target crop for genuine crop-specific yield estimation.'}
+            </span>
+            {errors.crop && <span className="form-error-msg">{errors.crop}</span>}
+          </div>
+
           {/* Rainfall */}
           <div className="form-group">
             <label className="form-label" htmlFor="rainfall">
+
               <span>{t?.rainfallLabel || 'Rainfall'}</span>
               <span className="form-unit">{t?.rainfallUnit || 'mm'}</span>
             </label>

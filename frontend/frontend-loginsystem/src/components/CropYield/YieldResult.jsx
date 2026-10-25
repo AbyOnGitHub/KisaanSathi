@@ -1,21 +1,49 @@
 import React from 'react';
-import { Award, Info } from 'lucide-react';
+import { Award, Info, Sprout } from 'lucide-react';
 
 export default function YieldResult({ result, t }) {
   if (!result) return null;
 
   const { predicted_yield, unit, inputs } = result;
+  const crop = result.crop || inputs?.crop;
+  const cropDisplayName = crop ? (t?.cropNames?.[crop] || crop) : null;
 
-  const explanation = t?.resultExplanation
-    ? t.resultExplanation(predicted_yield.toFixed(2))
-    : `Based on the conditions you provided, the estimated crop yield is approximately ${predicted_yield.toFixed(2)} quintals per acre.`;
+  const explanation = cropDisplayName
+    ? (t?.cropSelectedResult
+        ? t.cropSelectedResult(cropDisplayName, predicted_yield.toFixed(2))
+        : `Based on the conditions you provided, the estimated harvest yield for ${cropDisplayName} is approximately ${predicted_yield.toFixed(2)} quintals per acre.`)
+    : (t?.resultExplanation
+        ? t.resultExplanation(predicted_yield.toFixed(2))
+        : `Based on the conditions you provided, the estimated crop yield is approximately ${predicted_yield.toFixed(2)} quintals per acre.`);
 
   return (
     <div className="result-card">
       <div className="result-header">
         <Award size={22} color="var(--primary)" />
-        <span>{t?.resultHeader || 'Estimated Crop Yield'}</span>
+        <span>
+          {cropDisplayName
+            ? `${t?.resultHeader || 'Estimated Crop Yield'}: ${cropDisplayName}`
+            : (t?.resultHeader || 'Estimated Crop Yield')}
+        </span>
       </div>
+
+      {cropDisplayName && (
+        <div style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '0.4rem',
+          padding: '0.35rem 0.85rem',
+          backgroundColor: 'var(--primary-light, #e8f5e9)',
+          color: 'var(--primary, #2b8a3e)',
+          borderRadius: '16px',
+          fontWeight: 600,
+          fontSize: '0.88rem',
+          marginBottom: '1rem'
+        }}>
+          <Sprout size={16} />
+          <span>{cropDisplayName}</span>
+        </div>
+      )}
 
       <div className="result-value-box">
         <span className="result-number">{predicted_yield.toFixed(2)}</span>
@@ -34,6 +62,12 @@ export default function YieldResult({ result, t }) {
           </p>
           <table className="result-summary-table">
             <tbody>
+              {cropDisplayName && (
+                <tr>
+                  <td><strong>{t?.cropLabel || 'Selected Crop'}</strong></td>
+                  <td><strong>{cropDisplayName}</strong></td>
+                </tr>
+              )}
               <tr>
                 <td>{t?.rainfallLabel || 'Rainfall'}</td>
                 <td>{inputs.rainfall} {t?.rainfallUnit || 'mm'}</td>
@@ -80,3 +114,4 @@ export default function YieldResult({ result, t }) {
     </div>
   );
 }
+
