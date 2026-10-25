@@ -24,8 +24,9 @@ export const HeroCarousel = () => {
       description: t('home.hero_slide_1_desc'),
       buttonText: t('home.hero_slide_1_btn'),
       link: '/products?category=seeds',
-      bgGradient: 'from-green-950 via-green-900 to-emerald-800',
-      image: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1000&auto=format&fit=crop&q=80',
+      bgColor: 'bg-green-950',
+      fadeGradient: 'from-green-950 via-green-950/80 sm:via-green-950/40',
+      image: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1200&auto=format&fit=crop&q=80',
     },
     {
       id: 2,
@@ -34,8 +35,9 @@ export const HeroCarousel = () => {
       description: t('home.hero_slide_2_desc'),
       buttonText: t('home.hero_slide_2_btn'),
       link: '/products?category=fertilizers',
-      bgGradient: 'from-amber-950 via-yellow-900 to-amber-800',
-      image: 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1000&auto=format&fit=crop&q=80',
+      bgColor: 'bg-[#1a140e]',
+      fadeGradient: 'from-[#1a140e] via-[#1a140e]/80 sm:via-[#1a140e]/40',
+      image: 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1200&auto=format&fit=crop&q=80',
     },
     {
       id: 3,
@@ -44,8 +46,9 @@ export const HeroCarousel = () => {
       description: t('home.hero_slide_3_desc'),
       buttonText: t('home.hero_slide_3_btn'),
       link: '/bargains',
-      bgGradient: 'from-blue-950 via-slate-900 to-teal-900',
-      image: 'https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=1000&auto=format&fit=crop&q=80',
+      bgColor: 'bg-[#0b1523]',
+      fadeGradient: 'from-[#0b1523] via-[#0b1523]/80 sm:via-[#0b1523]/40',
+      image: 'https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=1200&auto=format&fit=crop&q=80',
     },
   ];
 
@@ -63,13 +66,17 @@ export const HeroCarousel = () => {
       >
         {slides.map((slide) => (
           <SwiperSlide key={slide.id}>
-            <div className={`relative w-full h-full bg-gradient-to-r ${slide.bgGradient} text-white flex items-center overflow-hidden`}>
-              {/* Background overlay image */}
-              <img
-                src={slide.image}
-                alt={slide.title}
-                className="absolute right-0 top-0 bottom-0 w-1/2 sm:w-2/5 h-full object-cover opacity-25 sm:opacity-40 mix-blend-overlay"
-              />
+            <div className={`relative w-full h-full ${slide.bgColor} text-white flex items-center overflow-hidden`}>
+              {/* Natural Full-Color Image Container - Completely Untinted */}
+              <div className="absolute right-0 top-0 bottom-0 w-full sm:w-3/5 h-full pointer-events-none overflow-hidden">
+                <img
+                  src={slide.image}
+                  alt={slide.title}
+                  className="w-full h-full object-cover object-center"
+                />
+                {/* Horizontal gradient fade from dark content background to transparent */}
+                <div className={`absolute inset-0 bg-gradient-to-r ${slide.fadeGradient} to-transparent`} />
+              </div>
 
               {/* Content Box */}
               <div className="relative z-20 max-w-xl px-6 sm:px-12 py-6 pointer-events-auto">
@@ -82,7 +89,7 @@ export const HeroCarousel = () => {
                   {slide.title}
                 </h2>
 
-                <p className="text-xs sm:text-sm text-green-100/90 leading-relaxed mb-4 sm:mb-6 line-clamp-2 sm:line-clamp-3">
+                <p className="text-xs sm:text-sm text-gray-200 leading-relaxed mb-4 sm:mb-6 line-clamp-2 sm:line-clamp-3">
                   {slide.description}
                 </p>
 

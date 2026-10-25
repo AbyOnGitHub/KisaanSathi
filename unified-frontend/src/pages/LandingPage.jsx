@@ -148,7 +148,7 @@ export const LandingPage = () => {
                     alt={feature.title} 
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
-                  <div className={`absolute inset-0 ${feature.color} opacity-80 mix-blend-multiply`}></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-950/75 via-gray-900/20 to-transparent"></div>
                 </div>
                 
                 <div className="relative z-10 bg-white/20 p-3 rounded-lg backdrop-blur-md shadow-sm border border-white/20">
