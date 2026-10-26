@@ -24,7 +24,7 @@ export const HeroCarousel = () => {
       description: t('home.hero_slide_1_desc'),
       buttonText: t('home.hero_slide_1_btn'),
       link: '/products?category=seeds',
-      bgColor: 'bg-green-950',
+      bgColor: 'bg-[#0f2e1b]',
       image: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1200&auto=format&fit=crop&q=80',
     },
     {
@@ -34,8 +34,8 @@ export const HeroCarousel = () => {
       description: t('home.hero_slide_2_desc'),
       buttonText: t('home.hero_slide_2_btn'),
       link: '/products?category=fertilizers',
-      bgColor: 'bg-[#18120c]',
-      image: 'https://images.unsplash.com/photo-1592417817098-8f3d6ef23a81?w=1200&auto=format&fit=crop&q=80',
+      bgColor: 'bg-[#21160c]',
+      image: 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1200&auto=format&fit=crop&q=80',
     },
     {
       id: 3,
@@ -44,7 +44,7 @@ export const HeroCarousel = () => {
       description: t('home.hero_slide_3_desc'),
       buttonText: t('home.hero_slide_3_btn'),
       link: '/bargains',
-      bgColor: 'bg-[#0a121e]',
+      bgColor: 'bg-[#0b1626]',
       image: 'https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=1200&auto=format&fit=crop&q=80',
     },
   ];
@@ -68,8 +68,8 @@ export const HeroCarousel = () => {
               <div 
                 className="absolute right-0 top-0 bottom-0 w-full sm:w-1/2 md:w-3/5 h-full pointer-events-none overflow-hidden"
                 style={{
-                  maskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 100%)',
-                  WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 100%)',
+                  maskImage: 'linear-gradient(to right, transparent 0%, transparent 20%, black 50%, black 100%)',
+                  WebkitMaskImage: 'linear-gradient(to right, transparent 0%, transparent 20%, black 50%, black 100%)',
                 }}
               >
                 <img
@@ -80,7 +80,7 @@ export const HeroCarousel = () => {
               </div>
 
               {/* Content Box */}
-              <div className="relative z-20 max-w-xl px-6 sm:px-12 py-6 pointer-events-auto">
+              <div className="relative z-20 max-w-md sm:max-w-lg px-6 sm:px-12 py-6 pointer-events-auto">
                 <span className="inline-flex items-center gap-1 bg-agri-accent text-gray-900 text-[10px] sm:text-xs font-black px-2.5 py-1 rounded-full uppercase tracking-wider mb-3 shadow-xs">
                   <Sparkles className="w-3.5 h-3.5" />
                   {slide.tag}
