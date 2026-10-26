@@ -25,7 +25,6 @@ export const HeroCarousel = () => {
       buttonText: t('home.hero_slide_1_btn'),
       link: '/products?category=seeds',
       bgColor: 'bg-green-950',
-      fadeGradient: 'from-green-950 via-green-950/80 sm:via-green-950/40',
       image: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1200&auto=format&fit=crop&q=80',
     },
     {
@@ -35,9 +34,8 @@ export const HeroCarousel = () => {
       description: t('home.hero_slide_2_desc'),
       buttonText: t('home.hero_slide_2_btn'),
       link: '/products?category=fertilizers',
-      bgColor: 'bg-[#1a140e]',
-      fadeGradient: 'from-[#1a140e] via-[#1a140e]/80 sm:via-[#1a140e]/40',
-      image: 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1200&auto=format&fit=crop&q=80',
+      bgColor: 'bg-[#18120c]',
+      image: 'https://images.unsplash.com/photo-1592417817098-8f3d6ef23a81?w=1200&auto=format&fit=crop&q=80',
     },
     {
       id: 3,
@@ -46,8 +44,7 @@ export const HeroCarousel = () => {
       description: t('home.hero_slide_3_desc'),
       buttonText: t('home.hero_slide_3_btn'),
       link: '/bargains',
-      bgColor: 'bg-[#0b1523]',
-      fadeGradient: 'from-[#0b1523] via-[#0b1523]/80 sm:via-[#0b1523]/40',
+      bgColor: 'bg-[#0a121e]',
       image: 'https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=1200&auto=format&fit=crop&q=80',
     },
   ];
@@ -67,15 +64,19 @@ export const HeroCarousel = () => {
         {slides.map((slide) => (
           <SwiperSlide key={slide.id}>
             <div className={`relative w-full h-full ${slide.bgColor} text-white flex items-center overflow-hidden`}>
-              {/* Natural Full-Color Image Container - Completely Untinted */}
-              <div className="absolute right-0 top-0 bottom-0 w-full sm:w-3/5 h-full pointer-events-none overflow-hidden">
+              {/* Natural Full-Color Image Container - Completely Untinted (No Color Overlays) */}
+              <div 
+                className="absolute right-0 top-0 bottom-0 w-full sm:w-1/2 md:w-3/5 h-full pointer-events-none overflow-hidden"
+                style={{
+                  maskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 100%)',
+                  WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 100%)',
+                }}
+              >
                 <img
                   src={slide.image}
                   alt={slide.title}
                   className="w-full h-full object-cover object-center"
                 />
-                {/* Horizontal gradient fade from dark content background to transparent */}
-                <div className={`absolute inset-0 bg-gradient-to-r ${slide.fadeGradient} to-transparent`} />
               </div>
 
               {/* Content Box */}
